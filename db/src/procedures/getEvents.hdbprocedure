@@ -1,0 +1,9 @@
+PROCEDURE "getEvents" ( out et_events "FranchisePortal.Event" default empty )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+	AS
+BEGIN
+ 
+ et_events = select * from "FranchisePortal.Event";
+ 
+END

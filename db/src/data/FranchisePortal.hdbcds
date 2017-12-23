@@ -1,0 +1,143 @@
+context FranchisePortal {
+
+    //type definitions
+    table type error {
+        HTTP_STATUS_CODE : Integer;
+        ERROR_MESSAGE    : hana.NCHAR(100);
+    };
+
+    // event
+    entity Event {
+        key eventID           : String(32);
+            eventText         : String(80);
+            validityStartDate : LocalDate;
+            validitEndDate    : LocalDate;
+            thumbNailUrl      : String(120);
+            products          : association[1, 0..*] to EventProduct on products.eventID = eventID;
+            users             : association[1, 0..*] to EventUser    on users.eventID = eventID;
+    }
+    technical configuration {
+        column store;
+    };
+
+    // event products
+    entity EventProduct {
+        key eventID      : type of Event.eventID;
+        key productID    : String(32);
+            productText  : String(40);
+            thumbNailUrl : String(120);
+            baseMerchCat : String(20);
+            packSize     : Integer;
+            packPrice    : Decimal(10, 2);
+            dealPrice    : Decimal(10, 2);
+            barCode      : String(20);
+            event        : association[1, 1..1] to Event on event.eventID = eventID;
+    }
+    technical configuration {
+        column store;
+    };
+
+    //user
+    entity User {
+        key userID  : String(40);
+            storeID : type of Store.storeID;
+    }
+    technical configuration {
+        column store;
+    };
+
+    //store
+    entity Store {
+        key storeID : String(4);
+    }
+    technical configuration {
+        column store;
+    };
+
+    //user attributess
+    entity EventUser {
+        key eventID : type of Event.eventID;
+        key userID  : type of User.userID;
+    }
+    technical configuration {
+        column store;
+    };
+
+    //order request header
+    entity OrderRequestHeader {
+        key orderRequestID    : String(10);
+            eventID           : type of Event.eventID;
+            storeID           : type of Store.storeID;
+            orderRequestItems : association[1, 1..*] to OrderRequestItem on orderRequestItems.orderRequestID = orderRequestID;
+    }
+    technical configuration {
+        column store;
+    };
+
+    //order request item
+    entity OrderRequestItem {
+        key orderRequestID     : type of OrderRequestHeader.orderRequestID;
+        key itemID             : hana.SMALLINT;
+            orderRequestHeader : association[1, 1..1] to OrderRequestHeader on orderRequestHeader.orderRequestID = orderRequestID;
+    }
+    technical configuration {
+        column store;
+    };
+
+    //document
+    entity Document {
+        key documentID      : String(32);
+            documentType    : String(80);
+            fileName        : String(100);
+            fileType        : String(80);
+            mimeType        : String(80);
+            documentContent : LargeString null;
+    }
+    technical configuration {
+        column store;
+    };
+
+    //document stream
+    entity DocumentStream {
+        key documentID      : type of Document.documentID;
+            documentContent : LargeString;
+    }
+    technical configuration {
+        column store;
+    };
+
+    //document type
+    entity DocumentType {
+        key documentTypeID   : String(10);
+            documentTypeText : String(40);
+    }
+    technical configuration {
+        column store;
+    };
+
+    //active events for current date
+    view ActiveEvents as
+        select from     Event as a
+        left outer join EventUser as b on
+            a.eventID = b.eventID
+        {
+            a.eventID,
+            a.eventText,
+            a.thumbNailUrl
+        }
+        where
+                a.validitEndDate    <= current_date
+            and a.validityStartDate >= current_date
+        with structured privilege check;
+
+    //store order requests
+    view StoreOrderRequests as
+        select from OrderRequestHeader
+        {
+            orderRequestID,
+            eventID,
+            storeID
+        }
+        with structured privilege check;
+        
+};

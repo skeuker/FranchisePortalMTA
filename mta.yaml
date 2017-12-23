@@ -1,8 +1,43 @@
 ID: FranchisePortalMTA
 _schema-version: '2.0'
 version: 0.0.1
-
 modules:
- - name: web
-   type: html5
-   path: web
+  - name: web
+    type: html5
+    path: web
+    requires:
+      - name: HANA2-uaa
+      - name: js_api
+        group: destinations
+        properties:
+          name: core-backend
+          url: '~{url}'
+          forwardAuthToken: true
+  - name: db
+    type: hdb
+    path: db
+    requires:
+      - name: hdi-container
+  - name: js
+    type: nodejs
+    path: js
+    provides:
+      - name: js_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: HANA2-uaa
+      - name: hdi-container
+      - name: db
+resources:
+  - name: HANA2-uaa
+    type: com.sap.xs.uaa-space
+    parameters:
+      config-path: ./xs-security.json
+  - name: hdi-container
+    parameters:
+      config:
+        schema: FranchisePortal
+    properties:
+      hdi-container-name: '${service-name}'
+    type: com.sap.xs.hdi-container

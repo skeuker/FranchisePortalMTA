@@ -1,0 +1,19 @@
+PROCEDURE "deleteDocument" ( IN new "FranchisePortal.Document" default empty, OUT error "FranchisePortal.error" default empty )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER AS
+   ld_documentID String;
+BEGIN
+
+/*declare and implement exit handler*/
+declare exit handler for SQLEXCEPTION error = select ::SQL_ERROR_CODE as http_status_code, ::SQL_ERROR_MESSAGE as error_message from _DUMMY;
+
+/*get access to document entity to be deleted*/
+select top 1 "documentID" into ld_documentID from :new;
+
+/*delete document*/
+delete from "FranchisePortal.Document" where "documentID" = ld_documentID;	
+
+/*delete document stream*/
+delete from "FranchisePortal.DocumentStream" where "documentID" = ld_documentID;
+
+END

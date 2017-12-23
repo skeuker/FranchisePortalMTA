@@ -1,0 +1,22 @@
+//OData service for Franchise Portal
+service  { 
+
+	//event with navigation property to event products
+   "FranchisePortal.Event" as "Events" navigates ("Event_EventProducts" as "toEventProducts" from principal);
+   
+   //active events
+   "FranchisePortal.ActiveEvents" as "ActiveEvents" key ("eventID");
+   
+   //event products
+   "FranchisePortal.EventProduct" as "EventProducts";  
+   
+   //documents
+   "FranchisePortal.Document" as "Documents" create using "FranchisePortalXS::DocumentCreateDP" delete using "FranchisePortalXS::DocumentDeleteDP";  
+   
+   //document types
+   "FranchisePortal.DocumentType" as "DocumentTypes"; 
+   
+   //association between event and event products
+   association "Event_EventProducts" principal "Events"("eventID") multiplicity "1" dependent "EventProducts"("eventID") multiplicity "*";   
+   
+}

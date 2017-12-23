@@ -1,0 +1,25 @@
+PROCEDURE "createDocument" (IN new "FranchisePortal.Document" default empty, OUT error "FranchisePortal.error" default empty) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	as
+	ld_documentID String;
+	ld_documentType String;
+	ld_fileName String;
+	ld_fileType String;
+	ld_mimeType String;
+	ld_documentContent NCLOB;
+BEGIN
+
+/*declare and implement exit handler*/
+declare exit handler for SQLEXCEPTION error = select ::SQL_ERROR_CODE as http_status_code, ::SQL_ERROR_MESSAGE as error_message from _DUMMY;
+
+/*get access to document entity to be created*/
+select top 1 "documentID", "documentType", "fileName", "fileType", "mimeType", "documentContent" into ld_documentID, ld_documentType, ld_fileName, ld_fileType, ld_mimeType, ld_documentContent from :new;
+
+/*insert document*/
+insert into "FranchisePortal.Document" values(ld_documentID, ld_documentType, ld_fileName, ld_fileType, ld_mimeType, null);	
+
+/*insert document stream*/
+insert into "FranchisePortal.DocumentStream" values(ld_documentID, ld_documentContent);	
+         
+end
