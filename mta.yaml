@@ -29,6 +29,12 @@ modules:
       - name: HANA2-uaa
       - name: hdi-container
       - name: db
+
+  
+
+
+  
+
 resources:
   - name: HANA2-uaa
     type: com.sap.xs.uaa-space

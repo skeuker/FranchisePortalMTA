@@ -1,14 +1,29 @@
 {
 	"welcomeFile": "index.html",
 	"authenticationMethod": "route",
-	"routes": [{
+	"routes": [
+	{
+		"source": "(.*)(.js)",
+		"destination": "core-backend",
+		"csrfProtection": false,
+		"authenticationType": "xsuaa"
+	},
+	{
 		"source": "(.*)(.xsjs)",
 		"destination": "core-backend",
 		"csrfProtection": false,
 		"authenticationType": "xsuaa"
-	}, {
+	}, 
+	{
 		"source": "(.*)(.xsodata)",
 		"destination": "core-backend",
 		"authenticationType": "xsuaa"
-	}]
+	},
+	{
+		"source": "/documentStream",
+		"destination": "core-backend",
+		"csrfProtection": false,
+		"authenticationType": "xsuaa"
+	}
+]
 }
