@@ -19,16 +19,16 @@ module.exports = {
 
 		//Get instance of express
 		var expressApp = express();
+		
+		//register log handler for all routes
+		expressApp.use(logging.expressMiddleware(appContext));
 
-		//Initialize Express App for XS UAA and HDBEXT Middleware
+		//set passport strategy for authentication by JWT optained from UAA
 		passport.use("JWT", new xssec.JWTStrategy(xsenv.getServices({
 			uaa: {
 				tag: "xsuaa"
 			}
 		}).uaa));
-
-		//register log handler for all routes
-		expressApp.use(logging.expressMiddleware(appContext));
 
 		//register passport initialization for all routes
 		expressApp.use(passport.initialize());
@@ -39,25 +39,29 @@ module.exports = {
 				tag: 'hana'
 			}
 		}).hana;
+		
+		//authorize to Hana and register 'db' connection to all routes
+		expressApp.use(
+			passport.authenticate("JWT", {  // 1st middleware function
+				session: false
+			}),
+			xsHDBConn.middleware(hanaOptions) //2nd middleware function
+		);
 
-		//register application 'middleware'
-		expressApp.use("/documentStream",
-			xsHDBConn.middleware(hanaOptions));
-			
 		//feedback to caller
 		return expressApp;
-		
+
 	},
 
 	//initialize xs classic compatibility module
 	initXSJS: function(expressApp) {
-		
+
 		//require dependencies
 		var xsjs = require("@sap/xsjs");
 		var xsenv = require("@sap/xsenv");
-		
+
 		//prepare XSJS module options
-		var options = { 
+		var options = {
 			redirectUrl: "/index.xsjs"
 		};
 
@@ -85,10 +89,10 @@ module.exports = {
 
 		//start XSJS server providing prepared options
 		var xsjsApp = xsjs(options);
-		
-		//register XSJS for all express routes
-		expressApp.use(xsjsApp);
-		
+
+		//register XSJS for all /xsjs routes
+		expressApp.use("/xsjs", xsjsApp);
+
 	}
-	
+
 };

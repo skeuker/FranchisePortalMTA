@@ -1,0 +1,49 @@
+<mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:layout="sap.ui.layout" controllerName="pnp.co.za.FranchisePortalOrdering.controller.EventsList" displayBlock="true">
+	<Page showHeader="false">
+		<content>
+			<layout:VerticalLayout width="90%" class="sapUiResponsiveMargin">
+				<MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text=""/>
+				<List noDataText="Drop list items here" id="listEvents" items="{FranchisePortal>/Events}" class="sapUiMediumMarginBottom">
+					<items>
+						<StandardListItem type="Navigation" title="{FranchisePortal>eventText}"
+							description="{= 'From ' + ${FranchisePortal>validityStartDate} + ' to ' + ${FranchisePortal>validitEndDate} } }" icon="sap-icon://picture"
+							id="__item0"/>
+					</items>
+					<headerToolbar>
+						<OverflowToolbar width="100%" id="__toolbar1">
+							<content>
+								<Title text="Events"/>
+								<ToolbarSpacer id="__spacer0"/>
+								<Button text="Download" width="100px" id="__button0" press="downloadToExcel"/>
+							</content>
+						</OverflowToolbar>
+					</headerToolbar>
+				</List>
+				<UploadCollection change="onUploadCollectionChange" fileDeleted="onFileDeleted" fileType="jpg,png,bmp,pdf,docx,doc,png,gif,txt,xlsx,pptx"
+					id="ucDocUploadCollection" items="{ path: 'FranchisePortal>/Documents', factory: '.createUploadCollectionItem' }" maximumFileSize="10"
+					maximumFilenameLength="60" multiple="true" sameFilenameAllowed="false" typeMissmatch="onUploadFileTypeMismatch"
+					filenameLengthExceed="onUploadFileNameLengthExceed" uploadComplete="onPersonDocumentUploadComplete" uploadEnabled="false" uploadUrl="../"
+					noDataText="No entries. Click + to add" class="sapUiMediumMarginBottom">
+					<toolbar>
+						<OverflowToolbar>
+							<Title text="Documents"/>
+							<ToolbarSpacer/>
+							<Label id="labelPersonDocumentTypes" required="true" text="Document type"/>
+							<ComboBox id="cboxPersonDocumentTypes" items="{ path: 'FranchisePortal>/DocumentTypes' }" selectionChange="onDocumentTypesChange"
+								width="300px">
+								<items>
+									<core:ListItem key="{FranchisePortal>documentTypeID}" text="{FranchisePortal>documentTypeText}"/>
+								</items>
+							</ComboBox>
+							<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
+						</OverflowToolbar>
+					</toolbar>
+				</UploadCollection>
+				<Button type="Emphasized" text="Compose mail" press="composeMail" class="sapUiMediumMarginBottom"/>
+				<Button type="Transparent" text="Send mail" press="sendMail"/>
+				<core:HTML sanitizeContent="true" class="sapUiResponsiveMargin" content="&lt;div id=&quot;QuillEditor&quot;/&gt;"></core:HTML>
+			</layout:VerticalLayout>
+		</content>
+	</Page>
+</mvc:View>

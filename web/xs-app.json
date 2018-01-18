@@ -1,29 +1,18 @@
 {
-	"welcomeFile": "index.html",
+	"welcomeFile": "/webapp/index.html",
 	"authenticationMethod": "route",
-	"routes": [
-	{
-		"source": "(.*)(.js)",
+	"routes": [{
+		"source": "/xsjs/(.*)",
 		"destination": "core-backend",
 		"csrfProtection": false,
 		"authenticationType": "xsuaa"
-	},
-	{
-		"source": "(.*)(.xsjs)",
+	}, {
+		"source": "/node/(.*)",
 		"destination": "core-backend",
 		"csrfProtection": false,
 		"authenticationType": "xsuaa"
-	}, 
-	{
-		"source": "(.*)(.xsodata)",
-		"destination": "core-backend",
-		"authenticationType": "xsuaa"
-	},
-	{
-		"source": "/documentStream",
-		"destination": "core-backend",
-		"csrfProtection": false,
-		"authenticationType": "xsuaa"
-	}
-]
+	}, {
+		"source": "^/(.*)",
+		"localDir": "resources"
+	}]
 }

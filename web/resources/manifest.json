@@ -1,0 +1,163 @@
+{
+	"_version": "1.7.0",
+	"sap.app": {
+		"id": "pnp.co.za.FranchisePortalOrdering",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"sourceTemplate": {
+			"id": "servicecatalog.connectivityComponent",
+			"version": "0.0.0"
+		},
+		"dataSources": {
+			"FranchisePortalXS": {
+				"uri": "/xsjs/xsodata/FranchisePortal.xsodata",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_hcb",
+			"sap_belize"
+		]
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "pnp.co.za.FranchisePortalOrdering.view.App",
+			"type": "XML"
+		},
+		"dependencies": {
+			"minUI5Version": "1.30.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"contentDensities": {
+			"compact": false,
+			"cozy": false
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "pnp.co.za.FranchisePortalOrdering.i18n.i18n"
+				}
+			},
+			"FranchisePortal": {
+				"dataSource": "FranchisePortalXS",
+				"settings": {
+					"json": "true",
+					"useBatch": "true",
+					"loadMetadataAsync": false,
+					"defaultCountMode": "Inline",
+					"defaultBindingMode": "TwoWay",
+					"defaultOperationMode": "Client",
+					"sequentializeRequests": true
+				}
+			},
+			"side": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/sideContent.json"
+			},
+			"alerts": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/alerts.json"
+			},
+			"customer": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/customers.json"
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"controlId": "mainContents",
+				"viewType": "XML",
+				"controlAggregation": "pages",
+				"viewPath": "pnp.co.za.FranchisePortalOrdering.view",
+				"async": true
+			},
+			"routes": [
+				{
+					"name": "EventsList",
+					"pattern": "",
+					"titleTarget": "Event list",
+					"greedy": false,
+					"target": [
+						"EventsList"
+					]
+				}
+			],
+			"targets": {
+				"home": {
+					"viewName": "Home"
+				},
+				"appSettings": {
+					"viewName": "settings.AppSettings"
+				},
+				"masterSettings": {
+					"viewName": "settings.MasterSettings",
+					"controlId": "appSettings",
+					"controlAggregation": "masterPages",
+					"parent": "appSettings"
+				},
+				"detailSettings1": {
+					"viewName": "settings.DetailSettings1",
+					"controlId": "appSettings",
+					"controlAggregation": "detailPages",
+					"parent": "appSettings"
+				},
+				"statistics": {
+					"viewName": "Statistics"
+				},
+				"EventsList": {
+					"viewType": "XML",
+					"transition": "slide",
+					"clearAggregation": true,
+					"viewName": "EventsList",
+					"title": "Events List",
+					"viewId": "EventsList",
+					"viewPath": "pnp.co.za.FranchisePortalOrdering.view"
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				},
+				{
+					"uri": "css/quill.css"
+				}
+			]
+		}
+	},
+	"sap.platform.hcp": {
+		"uri": "webapp",
+		"_version": "1.1.0"
+	}
+}
