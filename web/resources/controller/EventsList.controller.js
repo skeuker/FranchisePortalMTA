@@ -112,7 +112,7 @@ sap.ui.define([
 		createUploadCollectionItem: function(sId, oContext) {
 
 			//Create object path for document stream instance
-			var sDocumentStreamPath = "/FranchisePortalXS/GetDocumentStreamXSJS.xsjs?documentID=" + this._oODataModel.getProperty("documentID",
+			var sDocumentStreamPath = "/node/documentStream?documentID=" + this._oODataModel.getProperty("documentID",
 				oContext);
 
 			//for each entry in the 'toDocuments' document set collection
@@ -261,7 +261,9 @@ sap.ui.define([
 			var oUploadCollectionItem = oEvent.getParameter("item");
 
 			//remove persistent instance from server (this canNOT be done staged for submitChanges)
-			this._oODataModel.remove(oUploadCollectionItem.getBindingContext("FranchisePortal").sPath, {});
+			this._oODataModel.remove(oUploadCollectionItem.getBindingContext("FranchisePortal").sPath, {
+				error: function() {}
+			});
 
 			//refresh Upload collection binding
 			oEvent.getSource().getBinding("items").refresh();
@@ -278,8 +280,14 @@ sap.ui.define([
 				}],
 				["bold", "italic", "underline", "strike"],
 				["image", "video", "link"],
-				[{ "color": [] }, { "background": [] }],
-				[{ "align": [] }]
+				[{
+					"color": []
+				}, {
+					"background": []
+				}],
+				[{
+					"align": []
+				}]
 			];
 
 			//compose overall text editor options

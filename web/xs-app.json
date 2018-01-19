@@ -1,5 +1,5 @@
 {
-	"welcomeFile": "/webapp/index.html",
+	"welcomeFile": "/index.html",
 	"authenticationMethod": "route",
 	"routes": [{
 		"source": "/xsjs/(.*)",
@@ -13,6 +13,10 @@
 		"authenticationType": "xsuaa"
 	}, {
 		"source": "^/(.*)",
-		"localDir": "resources"
+		"localDir": "resources",
+		"replace": {
+			"pathSuffixes": ["index.html"],
+			"vars": ["ui5liburl"]
+		}
 	}]
 }

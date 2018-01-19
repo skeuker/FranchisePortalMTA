@@ -2,7 +2,8 @@
   "dependencies": {
     "@sap/xsjs": "1.16.2",
     "@sap/xsenv": "1.2.7",
-    "@sap/cds": "1.14.0"
+    "@sap/cds": "1.14.0",
+    "sqlstring": "2.3.0"
   },
   "devDependencies": {
     "@sap/xsjs-test": "2.0.9"

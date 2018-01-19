@@ -13,6 +13,9 @@ modules:
           name: core-backend
           url: '~{url}'
           forwardAuthToken: true
+      - name: ui5-lib
+        properties:
+          ui5liburl: '~{url}'
   - name: db
     type: hdb
     path: db
@@ -29,12 +32,6 @@ modules:
       - name: HANA2-uaa
       - name: hdi-container
       - name: db
-
-  
-
-
-  
-
 resources:
   - name: HANA2-uaa
     type: com.sap.xs.uaa-space
@@ -47,3 +44,8 @@ resources:
     properties:
       hdi-container-name: '${service-name}'
     type: com.sap.xs.hdi-container
+  - name: ui5-lib
+    type: configuration
+    parameters:
+      provider-id: 'com.sap.ui5.dist.sapui5-dist-xsa.XSAC_UI5_FESV3:sapui5_fesv3'
+      version: '>=1.44.8'

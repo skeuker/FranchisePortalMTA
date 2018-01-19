@@ -11,7 +11,7 @@ service  {
    "FranchisePortal.EventProduct" as "EventProducts";  
    
    //documents
-   "FranchisePortal.Document" as "Documents" create using "FranchisePortalXS::DocumentCreateDP" delete using "FranchisePortalXS::DocumentDeleteDP";  
+   "FranchisePortal.Document" as "Documents" create using "xsodata::createDocument" delete using "xsodata::deleteDocument";  
    
    //document types
    "FranchisePortal.DocumentType" as "DocumentTypes"; 

@@ -1,4 +1,4 @@
-PROCEDURE "deleteDocument" ( IN new "FranchisePortal.Document" default empty, OUT error "FranchisePortal.error" default empty )
+PROCEDURE "xsodata::deleteDocument" ( IN new "FranchisePortal.Document" default empty, OUT error "FranchisePortal.error" default empty )
    LANGUAGE SQLSCRIPT
    SQL SECURITY INVOKER AS
    ld_documentID String;

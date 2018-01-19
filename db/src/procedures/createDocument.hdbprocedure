@@ -1,4 +1,4 @@
-PROCEDURE "createDocument" (IN new "FranchisePortal.Document" default empty, OUT error "FranchisePortal.error" default empty) 
+PROCEDURE "xsodata::createDocument" (IN new "FranchisePortal.Document" default empty, OUT error "FranchisePortal.error" default empty) 
 	LANGUAGE SQLSCRIPT
 	SQL SECURITY INVOKER 
 	as
