@@ -14,9 +14,13 @@ service  {
    "FranchisePortal.Document" as "Documents" create using "xsodata::createDocument" delete using "xsodata::deleteDocument";  
    
    //document types
-   "FranchisePortal.DocumentType" as "DocumentTypes"; 
+   "FranchisePortal.DocumentTypes" as "DocumentTypes"; 
    
    //association between event and event products
    association "Event_EventProducts" principal "Events"("eventID") multiplicity "1" dependent "EventProducts"("eventID") multiplicity "*";   
    
+}
+
+annotations {
+   enable OData4SAP;
 }

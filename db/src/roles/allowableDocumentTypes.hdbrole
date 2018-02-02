@@ -1,0 +1,8 @@
+{
+	"role":{
+		"name": "allowableDocumentTypes",
+		"schema_analytic_privileges":[{
+			"privileges": ["privilegedDocumentTypes"]
+		}]
+	}
+}

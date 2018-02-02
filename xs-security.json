@@ -1,4 +1,32 @@
 {
 	"xsappname": "FranchisePortalMTA",
-	"tenant-mode": "dedicated"
+	"tenant-mode": "dedicated",
+	"scopes": [{
+		"name": "$XSAPPNAME.Display",
+		"description": "display"
+	}, {
+		"name": "$XSAPPNAME.Edit",
+		"description": "edit"
+	}, {
+		"name": "$XSAPPNAME.Delete",
+		"description": "delete"
+	}],
+	"attributes": [{
+		"name": "DocumentType",
+		"description": "Document type",
+		"valueType": "string"
+	}, {
+		"name": "StoreID",
+		"description": "Store Code",
+		"valueType": "string"
+	}],
+	"role-templates": [{
+		"name": "BuyingClerk",
+		"description": "Buying clerk",
+		"scope-references": [
+			"$XSAPPNAME.Display",
+			"$XSAPPNAME.Edit"
+		],
+		"attribute-references": ["DocumentType"]
+	}]
 }

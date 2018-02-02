@@ -1,5 +1,0 @@
-STRUCTURED PRIVILEGE
-    "STOREORDER_REQUESTS_PRIVILEGE"
-    FOR SELECT ON
-    "FranchisePortal.StoreOrderRequests"
-    WHERE "storeID" = ( select "storeID" from "FranchisePortal.User" where "userID" = CURRENT_USER )

@@ -114,6 +114,15 @@ context FranchisePortal {
     technical configuration {
         column store;
     };
+    
+    //document types
+    view DocumentTypes as
+    	select from DocumentType
+    	{
+    		documentTypeID,
+    		documentTypeText
+    	}
+    	with structured privilege check;
 
     //active events for current date
     view ActiveEvents as

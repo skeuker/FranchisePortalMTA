@@ -2,8 +2,12 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"pnp/co/za/FranchisePortalOrdering/uuid"
-], function(Controller, JSONModel, uuid) {
+	"pnp/co/za/FranchisePortalOrdering/uuid",
+	"pnp/co/za/FranchisePortalOrdering/xlsx",
+	"pnp/co/za/FranchisePortalOrdering/filesaver",
+	"pnp/co/za/FranchisePortalOrdering/quill",
+	"pnp/co/za/FranchisePortalOrdering/shim"
+], function(Controller, JSONModel, uuid, xlsx, filesaver, quill, shim) {
 	"use strict";
 	return Controller.extend("pnp.co.za.FranchisePortalOrdering.controller.EventsList", {
 		/**
@@ -24,6 +28,84 @@ sap.ui.define([
 			if (this._oMessageStrip) {
 				this._oMessageStrip.setVisible(false);
 			}
+
+		},
+		/**
+		 *@memberOf pnp.co.za.FranchisePortalOrdering.controller.EventsList
+		 */
+		downloadToExcel: function(oEvent) {
+
+			//local data declaration
+			var aObjects = [];
+
+			//get event list items
+			var aEventItems = this.getView().byId("listEvents").getItems();
+
+			//compose array of event objects with attributes applicable for download
+			aEventItems.forEach(function(oEventItem) {
+
+				//get event entity from OData model
+				var oObject = this._oODataModel.getObject(oEventItem.getBindingContext("FranchisePortal").getPath());
+
+				//get array of event attribute key/value pairs
+				var aObjectEntries = Object.entries(oObject);
+
+				//reduce event entity attributes to those applicable for download
+				var oReducedObject = aObjectEntries.reduce(function(oAccumulator, aObjectEntry, i) {
+
+					//by attribute key
+					switch (aObjectEntry[0]) {
+
+						//attributes configured for download
+						case 'eventID':
+						case 'eventText':
+						case 'validityStartDate':
+						case 'validitEndDate':
+						case 'thumbNailUrl':
+							oAccumulator[aObjectEntry[0]] = aObjectEntry[1];
+							break;
+
+							//attributes not relevant for download
+						default:
+							break;
+					}
+
+					//for technical reasons related to reduce method
+					return oAccumulator;
+
+				}, {});
+
+				//add entity with reduced attributes to object array
+				aObjects.push(oReducedObject);
+
+			}.bind(this));
+
+			var ws = XLSX.utils.json_to_sheet(aObjects);
+
+			var wb = XLSX.utils.book_new();
+
+			XLSX.utils.book_append_sheet(wb, ws, "Catalog");
+
+			/* bookType can be any supported output type */
+			var wopts = {
+				bookType: 'xlsx',
+				bookSST: false,
+				type: 'binary'
+			};
+
+			var wbout = XLSX.write(wb, wopts);
+
+			var oFunction = function(s) {
+				var buf = new ArrayBuffer(s.length);
+				var view = new Uint8Array(buf);
+				for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+				return buf;
+			};
+
+			/* the saveAs call downloads a file on the local machine */
+			saveAs(new Blob([oFunction(wbout)], {
+				type: "application/octet-stream"
+			}), "test.xlsx");
 
 		},
 
@@ -186,6 +268,75 @@ sap.ui.define([
 
 			//refresh Upload collection binding
 			oEvent.getSource().getBinding("items").refresh();
+
+		},
+
+		//compose mail
+		composeMail: function() {
+
+			//compose text editor toolbar options
+			var aToolbarOptions = [
+				[{
+					header: [1, 2, false]
+				}],
+				["bold", "italic", "underline", "strike"],
+				["image", "video", "link"],
+				[{
+					"color": []
+				}, {
+					"background": []
+				}],
+				[{
+					"align": []
+				}]
+			];
+
+			//compose overall text editor options
+			var oQuillOptions = {
+				debug: "info",
+				modules: {
+					toolbar: aToolbarOptions
+				},
+				history: {
+					delay: 2000,
+					maxStack: 500,
+					userOnly: true
+				},
+				placeholder: "Compose an epic mail...",
+				theme: "snow"
+			};
+
+			//instantiate text editor with options
+			this.oQuillTextEditor = new Quill("#QuillEditor", oQuillOptions);
+
+		},
+
+		//send mail
+		sendMail: function() {
+
+			//get mail body
+			var sInnerHTML = this.oQuillTextEditor.root.innerHTML;
+
+			//construct service url
+			var sMailServiceUrl = "/FranchisePortalXS/SendMailXSJS.xsjs";
+
+			//call XS mail send service
+			jQuery.ajax({
+				url: sMailServiceUrl,
+				method: "GET",
+				dataType: "json",
+
+				//mail sent successfully
+				success: function(oResponse) {
+					this.sendStripMessage(this.getResourceBundle().getText("messageMailSendSucceeded"), sap.ui.core.MessageType.Information);
+				}.bind(this),
+
+				//failed to send mail
+				error: function(oResponse) {
+					this.sendStripMessage(this.getResourceBundle().getText("messageMailSendFailed"), sap.ui.core.MessageType.Error);
+				}.bind(this)
+
+			});
 
 		},
 

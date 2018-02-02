@@ -1,30 +1,37 @@
 <mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
-	xmlns:layout="sap.ui.layout" controllerName="pnp.co.za.FranchisePortalOrdering.controller.EventsList" displayBlock="true">
+	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:layout="sap.ui.layout"
+	controllerName="pnp.co.za.FranchisePortalOrdering.controller.EventsList" displayBlock="true">
 	<Page showHeader="false">
 		<content>
-			<layout:VerticalLayout width="90%" class="sapUiResponsiveMargin">
+			<VBox>
 				<MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text=""/>
-				<List noDataText="Drop list items here" id="listEvents" items="{FranchisePortal>/Events}" class="sapUiMediumMarginBottom">
-					<items>
-						<StandardListItem type="Navigation" title="{FranchisePortal>eventText}"
-							description="{= 'From ' + ${FranchisePortal>validityStartDate} + ' to ' + ${FranchisePortal>validitEndDate} } }" icon="sap-icon://picture"
-							id="__item0"/>
-					</items>
-					<headerToolbar>
-						<OverflowToolbar width="100%" id="__toolbar1">
-							<content>
-								<Title text="Events"/>
-								<ToolbarSpacer id="__spacer0"/>
-								<Button text="Download" width="100px" id="__button0" press="downloadToExcel"/>
-							</content>
-						</OverflowToolbar>
-					</headerToolbar>
-				</List>
+				<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Events" persistencyKey="SmartFilter_Explored" enableBasicSearch="false">
+					<smartFilterBar:controlConfiguration>
+						<smartFilterBar:ControlConfiguration key="eventText" label="Description">
+							<smartFilterBar:defaultFilterValues>
+								<smartFilterBar:SelectOption operator="sap.ui.model.FilterOperator.Contains" low="*"></smartFilterBar:SelectOption>
+							</smartFilterBar:defaultFilterValues>
+						</smartFilterBar:ControlConfiguration>
+					</smartFilterBar:controlConfiguration>
+					<!-- layout data used to make the table growing but the filter bar fixed -->
+					<smartFilterBar:layoutData>
+						<FlexItemData shrinkFactor="0"/>
+					</smartFilterBar:layoutData>
+				</smartFilterBar:SmartFilterBar>
+				<smartTable:SmartTable id="eventsSmartTable" entitySet="Events" enableAutoBinding="true" smartFilterId="smartFilterBar" tableType="Table"
+					useExportToExcel="true" useVariantManagement="false" useTablePersonalisation="true" header="Line Items" showRowCount="true"
+					persistencyKey="SmartTableAnalytical_Explored" initiallyVisibleFields="eventID,eventText,validityStartDate,validitEndDate"
+					class="sapUiResponsiveContentPadding">
+					<!-- layout data used to make the table growing but the filter bar fixed -->
+					<smartTable:layoutData>
+						<FlexItemData growFactor="1" baseSize="0%"/>
+					</smartTable:layoutData>
+				</smartTable:SmartTable>
 				<UploadCollection change="onUploadCollectionChange" fileDeleted="onFileDeleted" fileType="jpg,png,bmp,pdf,docx,doc,png,gif,txt,xlsx,pptx"
 					id="ucDocUploadCollection" items="{ path: 'FranchisePortal>/Documents', factory: '.createUploadCollectionItem' }" maximumFileSize="10"
 					maximumFilenameLength="60" multiple="true" sameFilenameAllowed="false" typeMissmatch="onUploadFileTypeMismatch"
 					filenameLengthExceed="onUploadFileNameLengthExceed" uploadComplete="onPersonDocumentUploadComplete" uploadEnabled="false" uploadUrl="../"
-					noDataText="No entries. Click + to add" class="sapUiMediumMarginBottom">
+					noDataText="No entries. Click + to add" class="sapUiMediumMarginTop">
 					<toolbar>
 						<OverflowToolbar>
 							<Title text="Documents"/>
@@ -40,10 +47,7 @@
 						</OverflowToolbar>
 					</toolbar>
 				</UploadCollection>
-				<Button type="Emphasized" text="Compose mail" press="composeMail" class="sapUiMediumMarginBottom"/>
-				<Button type="Transparent" text="Send mail" press="sendMail"/>
-				<core:HTML sanitizeContent="true" class="sapUiResponsiveMargin" content="&lt;div id=&quot;QuillEditor&quot;/&gt;"></core:HTML>
-			</layout:VerticalLayout>
+			</VBox>
 		</content>
 	</Page>
 </mvc:View>

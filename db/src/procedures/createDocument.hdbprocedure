@@ -4,6 +4,7 @@ PROCEDURE "xsodata::createDocument" (IN new "FranchisePortal.Document" default e
 	as
 	ld_documentID String;
 	ld_documentType String;
+	ld_documentTypeAttrib String;
 	ld_fileName String;
 	ld_fileType String;
 	ld_mimeType String;
@@ -21,5 +22,5 @@ insert into "FranchisePortal.Document" values(ld_documentID, ld_documentType, ld
 
 /*insert document stream*/
 insert into "FranchisePortal.DocumentStream" values(ld_documentID, ld_documentContent);	
-         
+
 end

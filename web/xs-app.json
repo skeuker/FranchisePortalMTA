@@ -5,12 +5,14 @@
 		"source": "/xsjs/(.*)",
 		"destination": "core-backend",
 		"csrfProtection": false,
-		"authenticationType": "xsuaa"
+		"authenticationType": "xsuaa",
+		"scope": "$XSAPPNAME.Edit"
 	}, {
 		"source": "/node/(.*)",
 		"destination": "core-backend",
 		"csrfProtection": false,
-		"authenticationType": "xsuaa"
+		"authenticationType": "xsuaa",
+		"scope": "$XSAPPNAME.Edit"
 	}, {
 		"source": "^/(.*)",
 		"localDir": "resources",
