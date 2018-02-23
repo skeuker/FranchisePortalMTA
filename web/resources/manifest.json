@@ -19,7 +19,17 @@
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
-					"localUri": "localService/metadata.xml"
+					"localUri": "localService/metadata.xml",
+					"annotations": [
+						"annotation"
+					]
+				}
+			},
+			"annotation": {
+				"type": "ODataAnnotation",
+				"uri": "annotations/annotation.xml",
+				"settings": {
+					"localUri": "annotations/annotation.xml"
 				}
 			}
 		}
@@ -63,9 +73,7 @@
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
-				"settings": {
-					"bundleName": "pnp.co.za.FranchisePortalOrdering.i18n.i18n"
-				}
+				"uri": "i18n/i18n.properties"
 			},
 			"FranchisePortal": {
 				"dataSource": "FranchisePortalXS",
@@ -103,35 +111,39 @@
 			},
 			"routes": [
 				{
-					"name": "EventsList",
+					"name": "Home",
 					"pattern": "",
+					"greedy": false,
+					"target": [
+						"Home"
+					]
+				},
+				{
+					"name": "EventsList",
+					"pattern": "EventsList",
 					"greedy": false,
 					"target": [
 						"EventsList"
 					]
+				},
+				{
+					"name": "Event",
+					"pattern": "Event/:eventID:",
+					"greedy": false,
+					"target": [
+						"Event"
+					]
 				}
 			],
 			"targets": {
-				"home": {
-					"viewName": "Home"
-				},
-				"appSettings": {
-					"viewName": "settings.AppSettings"
-				},
-				"masterSettings": {
-					"viewName": "settings.MasterSettings",
-					"controlId": "appSettings",
-					"controlAggregation": "masterPages",
-					"parent": "appSettings"
-				},
-				"detailSettings1": {
-					"viewName": "settings.DetailSettings1",
-					"controlId": "appSettings",
-					"controlAggregation": "detailPages",
-					"parent": "appSettings"
-				},
-				"statistics": {
-					"viewName": "Statistics"
+				"Home": {
+					"viewType": "XML",
+					"transition": "slide",
+					"clearAggregation": true,
+					"viewName": "Home",
+					"title": "Home",
+					"viewId": "Home",
+					"viewPath": "pnp.co.za.FranchisePortalOrdering.view"
 				},
 				"EventsList": {
 					"viewType": "XML",
@@ -140,6 +152,15 @@
 					"viewName": "EventsList",
 					"title": "Events List",
 					"viewId": "EventsList",
+					"viewPath": "pnp.co.za.FranchisePortalOrdering.view"
+				},
+				"Event": {
+					"viewType": "XML",
+					"transition": "slide",
+					"clearAggregation": true,
+					"viewName": "Event",
+					"title": "Event",
+					"viewId": "Event",
 					"viewPath": "pnp.co.za.FranchisePortalOrdering.view"
 				}
 			}

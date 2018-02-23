@@ -1,53 +1,73 @@
-<mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+<mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f"
 	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:layout="sap.ui.layout"
-	controllerName="pnp.co.za.FranchisePortalOrdering.controller.EventsList" displayBlock="true">
-	<Page showHeader="false">
-		<content>
-			<VBox>
-				<MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text=""/>
-				<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Events" persistencyKey="SmartFilter_Explored" enableBasicSearch="false">
-					<smartFilterBar:controlConfiguration>
-						<smartFilterBar:ControlConfiguration key="eventText" label="Description">
-							<smartFilterBar:defaultFilterValues>
-								<smartFilterBar:SelectOption operator="sap.ui.model.FilterOperator.Contains" low="*"></smartFilterBar:SelectOption>
-							</smartFilterBar:defaultFilterValues>
-						</smartFilterBar:ControlConfiguration>
-					</smartFilterBar:controlConfiguration>
-					<!-- layout data used to make the table growing but the filter bar fixed -->
-					<smartFilterBar:layoutData>
-						<FlexItemData shrinkFactor="0"/>
-					</smartFilterBar:layoutData>
-				</smartFilterBar:SmartFilterBar>
-				<smartTable:SmartTable id="eventsSmartTable" entitySet="Events" enableAutoBinding="true" smartFilterId="smartFilterBar" tableType="Table"
-					useExportToExcel="true" useVariantManagement="false" useTablePersonalisation="true" header="Line Items" showRowCount="true"
-					persistencyKey="SmartTableAnalytical_Explored" initiallyVisibleFields="eventID,eventText,validityStartDate,validitEndDate"
-					class="sapUiResponsiveContentPadding">
-					<!-- layout data used to make the table growing but the filter bar fixed -->
-					<smartTable:layoutData>
-						<FlexItemData growFactor="1" baseSize="0%"/>
-					</smartTable:layoutData>
-				</smartTable:SmartTable>
-				<UploadCollection change="onUploadCollectionChange" fileDeleted="onFileDeleted" fileType="jpg,png,bmp,pdf,docx,doc,png,gif,txt,xlsx,pptx"
-					id="ucDocUploadCollection" items="{ path: 'FranchisePortal>/Documents', factory: '.createUploadCollectionItem' }" maximumFileSize="10"
-					maximumFilenameLength="60" multiple="true" sameFilenameAllowed="false" typeMissmatch="onUploadFileTypeMismatch"
-					filenameLengthExceed="onUploadFileNameLengthExceed" uploadComplete="onPersonDocumentUploadComplete" uploadEnabled="false" uploadUrl="../"
-					noDataText="No entries. Click + to add" class="sapUiMediumMarginTop">
-					<toolbar>
-						<OverflowToolbar>
-							<Title text="Documents"/>
-							<ToolbarSpacer/>
-							<Label id="labelPersonDocumentTypes" required="true" text="Document type"/>
-							<ComboBox id="cboxPersonDocumentTypes" items="{ path: 'FranchisePortal>/DocumentTypes' }" selectionChange="onDocumentTypesChange"
-								width="300px">
-								<items>
-									<core:ListItem key="{FranchisePortal>documentTypeID}" text="{FranchisePortal>documentTypeText}"/>
-								</items>
-							</ComboBox>
-							<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
-						</OverflowToolbar>
-					</toolbar>
-				</UploadCollection>
-			</VBox>
-		</content>
-	</Page>
+	xmlns:sv="sap.ui.comp.smartvariants" xmlns:microchart="sap.ui.comp.smartmicrochart"
+	controllerName="pnp.co.za.FranchisePortalOrdering.controller.EventsList" displayBlock="true" busy="{viewModel>/busy}">
+	<MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text=""/>
+	<f:DynamicPage id="dynamicEventListPage" toggleHeaderOnTitleClick="true" headerExpanded="true">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<sv:SmartVariantManagement id="smartVariantManageEventList" persistencyKey="fiori.test.application2.view.S4" showShare="true"
+						showExecuteOnSelection="true"/>
+				</f:heading>
+				<f:snappedContent>
+					<Text id="statusText"></Text>
+				</f:snappedContent>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader>
+				<f:content>
+					<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Events" persistencyKey="fiori.test.application2.view.S4.FilterBar" enableBasicSearch="false"
+						smartVariant="smartVariantManageEventList" considerSelectionVariants="true" useToolbar="false" assignedFiltersChanged="onAssignedFiltersChanged">
+						<!-- layout data used to make the table growing but the filter bar fixed -->
+						<smartFilterBar:layoutData>
+							<FlexItemData shrinkFactor="0"/>
+						</smartFilterBar:layoutData>
+					</smartFilterBar:SmartFilterBar>
+				</f:content>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<smartTable:SmartTable id="eventsSmartTable" entitySet="Events" enableAutoBinding="true" smartFilterId="smartFilterBar"
+				tableType="ResponsiveTable" useExportToExcel="true" useVariantManagement="false" beforeExport="onBeforeExportEventsList"
+				useTablePersonalisation="true" showTablePersonalisation="true" showRowCount="true" header="Events" height="100%"
+				persistencyKey="SmartTableAnalytical_Explored" showFullScreenButton="true" class="sapUiResponsiveContentPadding">
+				<smartTable:customToolbar>
+					<OverflowToolbar design="Transparent">
+						<ToolbarSpacer/>
+						<Button icon="sap-icon://download" text="Download" press="onPressEventsListDownload" type="Transparent"/>
+					</OverflowToolbar>
+				</smartTable:customToolbar>
+				<Table id="tabEventsList" itemPress="onPressEventsListItem" mode="SingleSelectMaster">
+					<columns>
+						<Column hAlign="End" width="100px" hAlig="End">
+							<header><Text text="Download" textAlign="End"/></header>
+							<customData>
+								<core:CustomData key="p13nData" value='\{"columnIndex":"6"}'/>
+							</customData>
+						</Column>
+						<Column width="150px" hAlign="Begin">
+							<header><Text text="Order status" textAlign="End"/></header>
+							<customData>
+								<core:CustomData key="p13nData" value='\{"columnIndex":"5"}'/>
+							</customData>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem counter="0" type="Active">
+							<cells>
+								<Button text="Download" type="Transparent"/>
+								<microchart:SmartBulletMicroChart id="ItemsSmartBulletMicroChart" entitySet="Events"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<!-- layout data used to make the table growing but the filter bar fixed -->
+				<smartTable:layoutData>
+					<FlexItemData growFactor="1" baseSize="0%"/>
+				</smartTable:layoutData>
+			</smartTable:SmartTable>
+		</f:content>
+	</f:DynamicPage>
 </mvc:View>

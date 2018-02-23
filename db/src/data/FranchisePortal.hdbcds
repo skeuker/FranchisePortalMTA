@@ -13,6 +13,7 @@ context FranchisePortal {
             validityStartDate : LocalDate;
             validitEndDate    : LocalDate;
             thumbNailUrl      : String(120);
+            orderRequests	  : association[1, 0..*] to OrderRequestHeader on orderRequests.eventID = eventID;
             products          : association[1, 0..*] to EventProduct on products.eventID = eventID;
             users             : association[1, 0..*] to EventUser    on users.eventID = eventID;
     }
@@ -32,6 +33,24 @@ context FranchisePortal {
             dealPrice    : Decimal(10, 2);
             barCode      : String(20);
             event        : association[1, 1..1] to Event on event.eventID = eventID;
+    }
+    technical configuration {
+        column store;
+    };
+    
+    // event shopping cart
+    entity EventShoppingCartItem {
+        key eventID      : type of Event.eventID;
+        key productID    : String(32);
+            productText  : String(40);
+            thumbNailUrl : String(120);
+            baseMerchCat : String(20);
+            packSize     : Integer;
+            packPrice    : Decimal(10, 2);
+            dealPrice    : Decimal(10, 2);
+            barCode      : String(20);
+            quantity     : Integer;
+            event        : association[1, 0..*] to Event on event.eventID = eventID;
     }
     technical configuration {
         column store;
@@ -65,10 +84,12 @@ context FranchisePortal {
 
     //order request header
     entity OrderRequestHeader {
-        key orderRequestID    : String(10);
+        key orderRequestID    : String(32);
             eventID           : type of Event.eventID;
             storeID           : type of Store.storeID;
+            externalOrderID	  : String(10);
             orderRequestItems : association[1, 1..*] to OrderRequestItem on orderRequestItems.orderRequestID = orderRequestID;
+            event       	  : association[1, 1..1] to Event on event.eventID = eventID;
     }
     technical configuration {
         column store;
@@ -78,6 +99,8 @@ context FranchisePortal {
     entity OrderRequestItem {
         key orderRequestID     : type of OrderRequestHeader.orderRequestID;
         key itemID             : hana.SMALLINT;
+            productID		   : type of EventProduct.productID;
+            quantity		   : Integer;
             orderRequestHeader : association[1, 1..1] to OrderRequestHeader on orderRequestHeader.orderRequestID = orderRequestID;
     }
     technical configuration {

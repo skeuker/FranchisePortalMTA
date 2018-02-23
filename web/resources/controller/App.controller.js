@@ -32,7 +32,7 @@ sap.ui.define([
 			onItemSelect: function(oEvent) {
 				var oItem = oEvent.getParameter('item');
 				var sKey = oItem.getKey();
-				if (sKey !== "home" && sKey !== "systemSettings" && sKey !== "statistics") {
+				if (sKey !== "Home" && sKey !== "systemSettings" && sKey !== "statistics") {
 					MessageToast.show(sKey);
 				} else {
 					this.getRouter().navTo(sKey);

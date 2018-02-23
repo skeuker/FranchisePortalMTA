@@ -1,11 +1,10 @@
-/* global XLSX, saveAs, Quill */
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	'pnp/co/za/FranchisePortalOrdering/controller/Base.controller',
 	"sap/ui/model/json/JSONModel",
 	"pnp/co/za/FranchisePortalOrdering/uuid"
-], function(Controller, JSONModel, uuid) {
+], function(BaseController, JSONModel, uuid) {
 	"use strict";
-	return Controller.extend("pnp.co.za.FranchisePortalOrdering.controller.EventsList", {
+	return BaseController.extend("pnp.co.za.FranchisePortalOrdering.controller.EventsList", {
 		/**
 		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
 		 * @public
@@ -13,202 +12,76 @@ sap.ui.define([
 		 */
 		onInit: function() {
 
-			//get OData model reference 
-			this._oODataModel = this.getOwnerComponent().getModel("FranchisePortal");
-			this.byId("eventsSmartTable").setModel(this._oODataModel);
-			this.getView().setModel(this._oODataModel);
-			this._oODataModel.refreshSecurityToken(false);
+			//initialize controller
+			this.initialize();
 
-			//get message strip reference
-			this._oMessageStrip = this.byId("msMessageStrip");
-			if (this._oMessageStrip) {
-				this._oMessageStrip.setVisible(false);
-			}
+			//set model to smart table as direct model connection is required
+			this.byId("eventsSmartTable").setModel(this.oODataModel);
+
+			//attach view to this OData Model
+			this.getView().setModel(this.i18nModel, "i18n");
+			this.getView().setModel(this.oODataModel);
 
 		},
 
-		//Factory function for upload collection item
-		createUploadCollectionItem: function(sId, oContext) {
+		//on before export of events list
+		onBeforeExportEventsList: function(oEvt) {
 
-			//Create object path for document stream instance
-			var sDocumentStreamPath = "/node/documentStream?documentID=" + this._oODataModel.getProperty("documentID",
-				oContext);
-
-			//for each entry in the 'toDocuments' document set collection
-			var oUploadCollectionItem = new sap.m.UploadCollectionItem(sId, {
-				documentId: oContext.getProperty("documentID"),
-				fileName: this._oODataModel.getProperty("fileName", oContext),
-				mimeType: this._oODataModel.getProperty("mimeType", oContext),
-				url: sDocumentStreamPath
-			});
-
-			//set upload collection item attribute: document type
-			var oDocumentTypeAttribute = new sap.m.ObjectAttribute({
-				title: "Document type",
-				text: "Excel template"
-			});
-			oUploadCollectionItem.insertAttribute(oDocumentTypeAttribute, 999);
-
-			//set upload collection item attribute: file size
-			var oFileSizeAttribute = new sap.m.ObjectAttribute({
-				title: "File size",
-				text: "60 Kb"
-			});
-			oUploadCollectionItem.insertAttribute(oFileSizeAttribute, 999);
-
-			//return upload collection item instance for rendering in UI
-			return oUploadCollectionItem;
-
-		},
-
-		/**
-		 *@memberOf capetown.gov.registration.controller.Person
-		 */
-		onUploadCollectionChange: function(oEvent) {
-
-			//Get upload collection from event source
-			var oUploadCollection = oEvent.getSource();
-
-			//Get attributes of file just uploaded
-			var oParameters = oEvent.getParameters();
-
-			//Add upload collection parameter pertaining to security token
-			var oCustomerHeaderToken = new sap.m.UploadCollectionParameter({
-				name: "x-csrf-token",
-				value: "securityTokenFromModel"
-			});
-			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
-
-			//Prevent instant upload by FileUploader (line 970, debug source)
-			oUploadCollection._oFileUploader.setEnabled(false);
-
-			//create file reader and file reader event handler
-			var oFileReader = new FileReader();
-			oFileReader.onload = (function() {
-
-				//get file content read
-				var sDocumentContent = oFileReader.result;
-				sDocumentContent = sDocumentContent.split(",")[1];
-
-				//get new upload collection item and set status
-				var oUploadCollectionItem = oUploadCollection.aItems[0];
-				oUploadCollectionItem._percentUploaded = 100;
-				oUploadCollectionItem._status = "display";
-
-				//set binding context for new upload collection item
-				this._oODataModel.setProperty("documentContent", sDocumentContent, oFileReader.oContext);
-
-				//submit changes to get correct document key			
-				this._oODataModel.submitChanges({
-
-					//success event handler
-					success: function(oData) {
-
-						//raise event upload complete
-						oUploadCollection.fireUploadComplete();
-
-					}.bind(this),
-
-					//success event handler
-					error: function(oError) {
-
-						//raise event upload complete
-						oUploadCollection.fireUploadComplete();
-
-					}.bind(this)
-
-				});
-
-			}).bind(this);
-
-			//create new entry in the OData model's DocumentSet
-			var oContext = this._oODataModel.createEntry("Documents", {
-				properties: {
-					documentID: this.getUUID(),
-					documentType: "ExcelTemplate",
-					fileName: oParameters.files[0].name,
-					fileType: oParameters.files[0].type,
-					mimeType: oParameters.files[0].type
-				}
-			});
-
-			//provide file reader with binding context
-			oFileReader.oContext = oContext;
-
-			//invoke reading of content of file just uploaded
-			oFileReader.readAsDataURL(oParameters.files[0]);
-
-		},
-
-		/**
-		 * Gets a UUID as a unique ID at runtime formatted
-		 * in such way that it is acceptable as SAP GUID
-		 * @public
-		 */
-		getUUID: function() {
-
-			/*return version1 UUID, removing formatting hyphens, 
-			converting to upper case to match a SAP GUID*/
-			return window.uuid.v1().replace(/-/g, "").toUpperCase();
-
-		},
-
-		/**
-		 *@memberOf capetown.gov.registration.controller.Person
-		 */
-		onDocumentTypesChange: function(oEvent) {
-
-			//get reference to document upload UI controls
-			var oCBoxDocumentTypes = oEvent.getSource();
-			var oUploadCollection = this.getView().byId("ucDocUploadCollection");
-
-			//disable upload collection upload when no document type selected
-			if (oCBoxDocumentTypes.getSelectedItem() === null) {
-				oUploadCollection.setUploadEnabled(false);
+			//get smart table setting for export to Excel
+			var mExcelSettings = oEvt.getParameter("exportSettings");
+			// GW export
+			if (mExcelSettings.url) {
 				return;
 			}
+			// For UI5 Client Export --> The settings contains sap.ui.export.SpreadSheet relevant settings that be used to modify the output of excel
 
-			//enable upload collection upload when document type selected
-			oUploadCollection.setUploadEnabled(true);
+			// Disable Worker as Mockserver is used in explored --> Do not use this for real applications!
+			mExcelSettings.worker = false;
 
 		},
 
-		//event handler for deletion of upload collection item
-		onFileDeleted: function(oEvent) {
+		//on click events table row
+		onPressEventsListItem: function(oEvent) {
 
-			//get upload collection item affected by deletion
-			var oUploadCollectionItem = oEvent.getParameter("item");
+			//prepare object path to be passed on to target
+			var oListItem = oEvent.getParameter("listItem");
 
-			//remove persistent instance from server (this canNOT be done staged for submitChanges)
-			this._oODataModel.remove(oUploadCollectionItem.getBindingContext("FranchisePortal").sPath, {
-				error: function() {}
+			//get binding context of this event
+			var oEvent = oListItem.getBindingContext().getObject();
+
+			//navigate to event display
+			this.getRouter().getTargets().display("Event", {
+				"eventID": oEvent.eventID
 			});
 
-			//refresh Upload collection binding
-			oEvent.getSource().getBinding("items").refresh();
+		},
+
+		//on personalise events list button click
+		onEventsListPersonalisationClick: function() {
+
+			//open table personalisation dialog
+			this.getView().byId("eventsSmartTable").openPersonalisationDialog("Columns");
 
 		},
 
-		/**
-		 * Convenience method for getting the resource bundle.
-		 * @public
-		 * @returns {sap.ui.model.resource.ResourceModel} the resourceModel of the component
-		 */
-		getResourceBundle: function() {
-			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
+		//on press events list download
+		onPressEventsListDownload: function(oEvent) {
+			if (oEvent) {
+
+			}
 		},
 
-		/**
-		 * Send message using message strip
-		 * @private
-		 */
-		sendStripMessage: function(sText, sType) {
-
-			//message handling
-			this._oMessageStrip.setText(sText);
-			this._oMessageStrip.setType(sType);
-			this._oMessageStrip.setVisible(true);
-
+		//on change of smart filter variant
+		onAssignedFiltersChanged: function(oEvent) {
+			
+			//retrieve new variant value
+			var oStatusText = sap.ui.getCore().byId(this.getView().getId() + "--statusText");
+			var oFilterBar = sap.ui.getCore().byId(this.getView().getId() + "--smartFilterBar");
+			if (oStatusText && oFilterBar) {
+				var sText = oFilterBar.retrieveFiltersWithValuesAsText();
+				oStatusText.setText(sText);
+			}
+			
 		}
 
 	});

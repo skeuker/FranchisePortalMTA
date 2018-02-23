@@ -11,7 +11,7 @@ module.exports = {
 		var xssec = require("@sap/xssec");
 		var xsHDBConn = require("@sap/hdbext");
 		var express = require("express");
-		var bodyParser = require('body-parser');
+		var bodyParser = require("body-parser");
 
 		//logging
 		var logging = require("@sap/logging");
@@ -47,6 +47,9 @@ module.exports = {
 			}),
 			xsHDBConn.middleware(hanaOptions) //2nd middleware function
 		);
+		
+		//invoke body parser to make req.body available
+		expressApp.use(bodyParser.json()); 
 
 		//feedback to caller
 		return expressApp;

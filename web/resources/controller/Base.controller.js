@@ -15,28 +15,24 @@ sap.ui.define([
 
 		//on initialization
 		initialize: function() {
-
-			//Initialize instance variables
-			this._oResourceBundle = this.getResourceBundle();
-			this._oMessageStrip = this.byId("msMessageStrip");
-			if (this._oMessageStrip) {
-				this._oMessageStrip.setVisible(false);
+			
+			//get OData model reference 
+			this.oODataModel = this.getOwnerComponent().getModel("FranchisePortal");
+			this.i18nModel = this.getOwnerComponent().getModel("i18n");
+			
+			//get resource bundle related to i18n model
+			this.oResourceBundle = this.getResourceBundle();
+			
+			//get message strip reference
+			this.oMessageStrip = this.byId("msMessageStrip");
+			if (this.oMessageStrip) {
+				this.oMessageStrip.setVisible(false);
 			}
 
-			//set models: OData model
-			this._oODataModel = this.getOwnerComponent().getModel("Registration");
-			sap.ui.getCore().setModel(this._oODataModel, "Registration");
-			this.setModel(this._oODataModel, "Registration");
-			this._oODataModel.setSizeLimit(500);
-
-			//set resource model 
-			this._oI18nModel = this.getOwnerComponent().getModel("i18n");
-			this.setModel(this._oI18nModel, "i18n");
-
 			//initiate interaction with message manager	
-			this._oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
-			this._oMessageManager = sap.ui.getCore().getMessageManager();
-			this._oMessageManager.registerMessageProcessor(this._oMessageProcessor);
+			this.oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
+			this.oMessageManager = sap.ui.getCore().getMessageManager();
+			this.oMessageManager.registerMessageProcessor(this.oMessageProcessor);
 
 		},
 
@@ -44,14 +40,14 @@ sap.ui.define([
 		setDeferredChangeGroups: function() {
 
 			//set deferred groupId for update of ODATA entities 
-			var aDeferredGroups = this._oODataModel.getDeferredGroups();
+			var aDeferredGroups = this.oODataModel.getDeferredGroups();
 			if (aDeferredGroups.indexOf("deferredChanges") < 0) {
 				aDeferredGroups.push("deferredChanges");
-				this._oODataModel.setDeferredGroups(aDeferredGroups);
+				this.oODataModel.setDeferredGroups(aDeferredGroups);
 			}
 
 			//set group ID for changes made through two way binding
-			this._oODataModel.setChangeGroups({
+			this.oODataModel.setChangeGroups({
 				"Service": {
 					groupId: "deferredChanges",
 					single: false
@@ -505,7 +501,7 @@ sap.ui.define([
 								code: oMissingInput.sFormID,
 								description: "Validation failed: Required input is missing",
 								type: sap.ui.core.MessageType.Error,
-								processor: this._oMessageProcessor
+								processor: this.oMessageProcessor
 							})
 						);
 					}
@@ -526,7 +522,7 @@ sap.ui.define([
 						if (oInvalidInput.sInvalidInputMessage) {
 							sMessageDetails = oInvalidInput.sInvalidInputMessage;
 						} else {
-							sMessageDetails = this._oResourceBundle.getText("invalidInputCorrectYourEntry");
+							sMessageDetails = this.oResourceBundle.getText("invalidInputCorrectYourEntry");
 						}
 						this._oMessageManager.addMessages(
 							new sap.ui.core.message.Message({
@@ -534,7 +530,7 @@ sap.ui.define([
 								code: oInvalidInput.sFormID,
 								description: sMessageDetails,
 								type: sap.ui.core.MessageType.Error,
-								processor: this._oMessageProcessor
+								processor: this.oMessageProcessor
 							})
 						);
 					}
@@ -555,7 +551,7 @@ sap.ui.define([
 						message: sMessage,
 						description: "Validation failed: please correct your entry in the highlighted field(s)",
 						type: sap.ui.core.MessageType.Error,
-						processor: this._oMessageProcessor
+						processor: this.oMessageProcessor
 					})
 				);
 
@@ -684,7 +680,7 @@ sap.ui.define([
 						oFormField.oControl.setValueState(sap.ui.core.ValueState.Error);
 					}
 					if (typeof oFormField.oControl.setValueStateText === "function") {
-						oFormField.oControl.setValueStateText(this._oResourceBundle.getText("invalidInputRequiredFields"));
+						oFormField.oControl.setValueStateText(this.oResourceBundle.getText("invalidInputRequiredFields"));
 					}
 				}
 			}.bind(this));
@@ -734,7 +730,7 @@ sap.ui.define([
 		createUploadCollectionItem: function(sId, oContext) {
 
 			//Create object path for document stream instance
-			var sDocumentStreamPath = this._oODataModel.sServiceUrl + "/" +
+			var sDocumentStreamPath = this.oODataModel.sServiceUrl + "/" +
 				this.getModel("Registration").createKey("DocumentStreamSet", {
 					DocumentID: oContext.getProperty("DocumentID")
 				});
@@ -742,22 +738,22 @@ sap.ui.define([
 			//for each entry in the 'toDocuments' document set collection
 			var oUploadCollectionItem = new sap.m.UploadCollectionItem(sId, {
 				documentId: oContext.getProperty("DocumentID"),
-				fileName: this._oODataModel.getProperty("FileName", oContext),
-				mimeType: this._oODataModel.getProperty("MimeType", oContext),
+				fileName: this.oODataModel.getProperty("FileName", oContext),
+				mimeType: this.oODataModel.getProperty("MimeType", oContext),
 				url: sDocumentStreamPath + "/$value"
 			});
 
 			//set upload collection item attribute: document type
 			var oDocumentTypeAttribute = new sap.m.ObjectAttribute({
 				title: "Document type",
-				text: this.formatDocumentTypeID(this._oODataModel.getProperty("DocumentType", oContext))
+				text: this.formatDocumentTypeID(this.oODataModel.getProperty("DocumentType", oContext))
 			});
 			oUploadCollectionItem.insertAttribute(oDocumentTypeAttribute, 999);
 
 			//set upload collection item attribute: file size
 			var oFileSizeAttribute = new sap.m.ObjectAttribute({
 				title: "File size",
-				text: this.formatFileSizeAttribute(this._oODataModel.getProperty("FileSize", oContext))
+				text: this.formatFileSizeAttribute(this.oODataModel.getProperty("FileSize", oContext))
 			});
 			oUploadCollectionItem.insertAttribute(oFileSizeAttribute, 999);
 
@@ -783,7 +779,7 @@ sap.ui.define([
 			}
 
 			// user to confirm to leave without changes
-			if (this._oODataModel.hasPendingChanges() || bTransientEntity) {
+			if (this.oODataModel.hasPendingChanges() || bTransientEntity) {
 
 				//Confirmation dialog to leave without saving
 				sap.m.MessageBox.confirm(this.getResourceBundle().getText("messageLeaveWithoutSaving"), {
@@ -802,7 +798,7 @@ sap.ui.define([
 						if (oAction === sap.m.MessageBox.Action.OK) {
 
 							//reset whatever changes have not been saved
-							this._oODataModel.resetChanges();
+							this.oODataModel.resetChanges();
 
 						}
 
@@ -867,7 +863,7 @@ sap.ui.define([
 		onUploadFileTypeMismatch: function(oEvent) {
 
 			//message handling for upload of file with unsupported type
-			sap.m.MessageBox.information(this._oResourceBundle.getText("invalidFileTypeForUpload"), {
+			sap.m.MessageBox.information(this.oResourceBundle.getText("invalidFileTypeForUpload"), {
 				styleClass: this.getOwnerComponent().getContentDensityClass()
 			});
 
@@ -877,7 +873,7 @@ sap.ui.define([
 		onUploadFileNameLengthExceed: function() {
 
 			//message handling for upload of file with unsupported type
-			sap.m.MessageBox.information(this._oResourceBundle.getText("filenNameLengthExceededForUpload"), {
+			sap.m.MessageBox.information(this.oResourceBundle.getText("filenNameLengthExceededForUpload"), {
 				styleClass: this.getOwnerComponent().getContentDensityClass()
 			});
 
@@ -890,7 +886,7 @@ sap.ui.define([
 			var oUploadCollectionItem = oEvent.getParameter("item");
 
 			//remove persistent instance from server (this canNOT be done staged for submitChanges)
-			this._oODataModel.remove(oUploadCollectionItem.getBindingContext("Registration").sPath, {});
+			this.oODataModel.remove(oUploadCollectionItem.getBindingContext("Registration").sPath, {});
 
 			//refresh Upload collection binding
 			oEvent.getSource().getBinding("items").refresh();
@@ -1040,7 +1036,7 @@ sap.ui.define([
 
 			//default model name where applicable
 			if (!oModel) {
-				oModel = this._oODataModel;
+				oModel = this.oODataModel;
 			}
 
 			//default model name where applicable
@@ -1055,13 +1051,13 @@ sap.ui.define([
 			oTypesCBox.setValueState(sap.ui.core.ValueState.None);
 
 			//get configuration item corresponding to type input
-			var oEntryType = oTypesCBox.getSelectedItem().getBindingContext(sModelName).getObject(); //this._oODataModel.getObject(.getPath());
+			var oEntryType = oTypesCBox.getSelectedItem().getBindingContext(sModelName).getObject(); //this.oODataModel.getObject(.getPath());
 
 			//for each entry in OData list binding
 			aListItems.forEach(function(oListItem) {
 
 				//check whether type of this entry matches
-				if (this._oODataModel.getProperty(oListItem.getBindingContext("Registration").getPath() +
+				if (this.oODataModel.getProperty(oListItem.getBindingContext("Registration").getPath() +
 						"/" + sTypeKey) === oTypesCBox.getSelectedKey()) {
 					iMatchCount++;
 				}
@@ -1119,7 +1115,7 @@ sap.ui.define([
 
 			//default model name where applicable
 			if (!oModel) {
-				oModel = this._oODataModel;
+				oModel = this.oODataModel;
 			}
 
 			//default model name where applicable
@@ -1147,7 +1143,7 @@ sap.ui.define([
 					aListItems.forEach(function(oListItem) {
 
 						//check whether type of this entry matches
-						if (this._oODataModel.getProperty(oListItem.getBindingContext("Registration").getPath() +
+						if (this.oODataModel.getProperty(oListItem.getBindingContext("Registration").getPath() +
 								"/" + sTypeKey) ===
 							oCBoxItem.getKey()) {
 							bMatched = true;
@@ -1160,7 +1156,7 @@ sap.ui.define([
 
 						//set type selector as invalid control where an entry does not exist for all types
 						oTypesCBox.setValueState(sap.ui.core.ValueState.Error);
-						oTypesCBox.setValueStateText(this._oResourceBundle.getText(sInvalidI18nTextKey));
+						oTypesCBox.setValueStateText(this.oResourceBundle.getText(sInvalidI18nTextKey));
 
 						//construct invalid form field
 						if (!oInvalidFormField) {
@@ -1192,11 +1188,11 @@ sap.ui.define([
 		visualizeSaveBeforeSubmit: function() {
 
 			//submit button disabled and not emphasized to hint: cannot submit  
-			this._oViewModel.setProperty("/btnSubmitEntityEnabled", false);
-			this._oViewModel.setProperty("/btnSubmitEntityType", sap.m.ButtonType.Transparent);
+			this.oViewModel.setProperty("/btnSubmitEntityEnabled", false);
+			this.oViewModel.setProperty("/btnSubmitEntityType", sap.m.ButtonType.Transparent);
 
 			//save button emphasized to hint: do save first
-			this._oViewModel.setProperty("/btnSaveEntityType", sap.m.ButtonType.Emphasized);
+			this.oViewModel.setProperty("/btnSaveEntityType", sap.m.ButtonType.Emphasized);
 
 		},
 
@@ -1204,13 +1200,13 @@ sap.ui.define([
 		visualizeEntityStatus: function() {
 
 			//re-read entity status from backend
-			this._oODataModel.read(this.getView().getBindingContext("Registration").getPath(), {
+			this.oODataModel.read(this.getView().getBindingContext("Registration").getPath(), {
 
 				//read success handler
 				success: function() {
 
 					//adobt entity attributes for UI rendering
-					this.adoptEntityAttributes("Status", this._oViewModel);
+					this.adoptEntityAttributes("Status", this.oViewModel);
 
 					//set submit button enabled state
 					this.setSubmitButtonEnabledState();
@@ -1315,9 +1311,9 @@ sap.ui.define([
 		sendStripMessage: function(sText, sType) {
 
 			//message handling
-			this._oMessageStrip.setText(sText);
-			this._oMessageStrip.setType(sType);
-			this._oMessageStrip.setVisible(true);
+			this.oMessageStrip.setText(sText);
+			this.oMessageStrip.setType(sType);
+			this.oMessageStrip.setVisible(true);
 
 		},
 
@@ -1422,7 +1418,7 @@ sap.ui.define([
 								message: oMessage.MessageText,
 								description: "Feedback from City of Cape Town",
 								type: oMessage.MessageType,
-								processor: this._oMessageProcessor
+								processor: this.oMessageProcessor
 							})
 						);
 					}.bind(this));
@@ -1457,7 +1453,7 @@ sap.ui.define([
 						message: oMessage.MessageText,
 						description: "Feedback from City of Cape Town",
 						type: oMessage.MessageType,
-						processor: this._oMessageProcessor
+						processor: this.oMessageProcessor
 					})
 				);
 			}.bind(this));
@@ -1619,7 +1615,7 @@ sap.ui.define([
 			});
 
 			//get service entity
-			var oService = this._oODataModel.getObject(sServiceKey);
+			var oService = this.oODataModel.getObject(sServiceKey);
 
 			//get service type text
 			var sServiceTypeText = this.formatServiceTypeID(oService.ServiceTypeID);
@@ -2446,7 +2442,7 @@ sap.ui.define([
 				}
 
 				//re-read entity status from backend
-				this._oODataModel.read(oReadContext.getPath(), {
+				this.oODataModel.read(oReadContext.getPath(), {
 
 					//read success handler
 					success: function() {
@@ -2475,16 +2471,16 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 
 				//re-read entity status from backend
-				this._oODataModel.read(this.getView().getBindingContext("Registration").getPath(), {
+				this.oODataModel.read(this.getView().getBindingContext("Registration").getPath(), {
 
 					//read success handler
 					success: function() {
 
 						//get entity in its current status
-						var oEntity = this._oODataModel.getObject(this.getView().getBindingContext("Registration").getPath());
+						var oEntity = this.oODataModel.getObject(this.getView().getBindingContext("Registration").getPath());
 
 						//adobt entity attributes for UI rendering
-						this.adoptEntityAttributes("Status", this._oViewModel);
+						this.adoptEntityAttributes("Status", this.oViewModel);
 
 						//set submit button enabled state
 						this.setSubmitButtonEnabledState();
@@ -2507,7 +2503,7 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 
 				//re-read (expanded) entity from backend
-				this._oODataModel.read(oContext.getPath(), {
+				this.oODataModel.read(oContext.getPath(), {
 
 					//url parameters: expand 
 					urlParameters: {
@@ -2518,10 +2514,10 @@ sap.ui.define([
 					success: function() {
 
 						//get entity in its current status
-						var oEntity = this._oODataModel.getObject(oContext.getPath());
+						var oEntity = this.oODataModel.getObject(oContext.getPath());
 
 						//adobt entity attributes for UI rendering
-						this.adoptEntityAttributes("Status", this._oViewModel);
+						this.adoptEntityAttributes("Status", this.oViewModel);
 
 						//set submit button enabled state
 						this.setSubmitButtonEnabledState();
@@ -2764,7 +2760,7 @@ sap.ui.define([
 		refreshEntityDataFromERP: function(sEntityType, sExpand, fnCallBack) {
 
 			//get entity in current status
-			var oEntity = this._oODataModel.getObject(this.getView().getBindingContext("Registration").getPath());
+			var oEntity = this.oODataModel.getObject(this.getView().getBindingContext("Registration").getPath());
 
 			//construct string of entity ID attribute
 			var sEntityID = sEntityType + "ID";
@@ -2876,7 +2872,7 @@ sap.ui.define([
 		adoptEntityAttributes: function(sScope, oViewModel) {
 
 			//get entity in its current status
-			var oEntity = this._oODataModel.getObject(this.getView().getBindingContext("Registration").getPath());
+			var oEntity = this.oODataModel.getObject(this.getView().getBindingContext("Registration").getPath());
 
 			//depending on scope
 			switch (sScope) {
@@ -2989,7 +2985,7 @@ sap.ui.define([
 			if (bComboBoxEnabled) {
 
 				//get entity in its current state
-				var oEntity = this._oODataModel.getObject(this.getView().getBindingContext("Registration").getPath());
+				var oEntity = this.oODataModel.getObject(this.getView().getBindingContext("Registration").getPath());
 
 				//compile list of remaining number types
 				if (!oEntity.PhoneNumber) {
@@ -3066,13 +3062,13 @@ sap.ui.define([
 			//update corresponding attribute in entity of ODATA model
 			switch (sNumberType) {
 				case "LandLine":
-					this._oODataModel.setProperty("PhoneNumber", sNumberValue, this.getView().getBindingContext("Registration"));
+					this.oODataModel.setProperty("PhoneNumber", sNumberValue, this.getView().getBindingContext("Registration"));
 					break;
 				case "Mobile":
-					this._oODataModel.setProperty("MobilePhoneNumber", sNumberValue, this.getView().getBindingContext("Registration"));
+					this.oODataModel.setProperty("MobilePhoneNumber", sNumberValue, this.getView().getBindingContext("Registration"));
 					break;
 				case "Fax":
-					this._oODataModel.setProperty("FaxNumber", sNumberValue, this.getView().getBindingContext("Registration"));
+					this.oODataModel.setProperty("FaxNumber", sNumberValue, this.getView().getBindingContext("Registration"));
 					break;
 			}
 
@@ -3135,13 +3131,13 @@ sap.ui.define([
 			//update ODATA model
 			switch (sNumberType) {
 				case "LandLine":
-					this._oODataModel.setProperty("PhoneNumber", null, this.getView().getBindingContext("Registration"));
+					this.oODataModel.setProperty("PhoneNumber", null, this.getView().getBindingContext("Registration"));
 					break;
 				case "Mobile":
-					this._oODataModel.setProperty("MobilePhoneNumber", null, this.getView().getBindingContext("Registration"));
+					this.oODataModel.setProperty("MobilePhoneNumber", null, this.getView().getBindingContext("Registration"));
 					break;
 				case "Fax":
-					this._oODataModel.setProperty("FaxNumber", null, this.getView().getBindingContext("Registration"));
+					this.oODataModel.setProperty("FaxNumber", null, this.getView().getBindingContext("Registration"));
 					break;
 			}
 
@@ -3157,13 +3153,13 @@ sap.ui.define([
 		setViewActionControlsEnabled: function(bEnabled) {
 
 			//switch enabled state of check action button
-			this._oViewModel.setProperty("/btnCheckEntityEnabled", bEnabled);
+			this.oViewModel.setProperty("/btnCheckEntityEnabled", bEnabled);
 
 			//switch enabled state of save button
-			this._oViewModel.setProperty("/btnSaveEntityEnabled", bEnabled);
+			this.oViewModel.setProperty("/btnSaveEntityEnabled", bEnabled);
 
 			//switch enabled state of support menu button
-			this._oViewModel.setProperty("/mbtnSupportEnabled", bEnabled);
+			this.oViewModel.setProperty("/mbtnSupportEnabled", bEnabled);
 
 		},
 
@@ -3222,13 +3218,13 @@ sap.ui.define([
 		terminateUserAction: function() {
 
 			//reset all changes
-			this._oODataModel.resetChanges();
+			this.oODataModel.resetChanges();
 
 			//forget navigation data
 			delete this._oNavData;
 
 			//view is no longer busy
-			this._oViewModel.setProperty("/busy", false);
+			this.oViewModel.setProperty("/busy", false);
 
 			//remove all messages from the message manager
 			this._oMessageManager.removeAllMessages();

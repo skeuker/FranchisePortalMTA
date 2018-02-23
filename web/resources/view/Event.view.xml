@@ -1,0 +1,174 @@
+<core:View xmlns:core="sap.ui.core" xmlns="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:m="sap.m"
+	controllerName="pnp.co.za.FranchisePortalOrdering.controller.Event" height="100%" busy="{viewModel>/busy}" xmlns:form="sap.ui.layout.form">
+	<m:MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text=""/>
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" useIconTabBar="true" showTitleInHeaderContent="false"
+		selectedSection="sectionEventProducts">
+		<headerTitle>
+			<ObjectPageHeader objectImageURI="/images/pnplogo.png" objectTitle="{FranchisePortal>eventText}" objectImageShape="Square">
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<layout:VerticalLayout>
+				<form:SimpleForm editable="false" layout="ResponsiveGridLayout" columnsL="1">
+					<form:content>
+						<m:Label text="Valid from"/>
+						<m:Text text="{ path: 'FranchisePortal>validityStartDate', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy' } }"/>
+						<m:Label text="Valid to"/>
+						<m:Text text="{ path: 'FranchisePortal>validitEndDate', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy' } }"/>
+					</form:content>
+				</form:SimpleForm>
+				<m:ProgressIndicator percentValue="30" displayValue="30%" showValue="true" state="None"/>
+			</layout:VerticalLayout>
+		</headerContent>
+		<sections>
+			<ObjectPageSection id="sectionEventProducts">
+				<subSections>
+					<ObjectPageSubSection id="subsectionEventProducts" title="Event products">
+						<blocks>
+							<m:Table id="tabEventProductList" itemPress="onPressEventProductListItem" items="{ path: 'FranchisePortal>toProducts' }"
+								noDataText="No entries" mode="SingleSelectMaster" backgroundDesign="Solid">
+								<m:items>
+									<m:ColumnListItem counter="0" press="onPressEventProductListItem" type="Active">
+										<m:cells>
+											<m:Text maxLines="1" text="{FranchisePortal>productID}"/>
+											<m:Text maxLines="1" text="{FranchisePortal>productText}"/>
+											<m:Input type="Number"/>
+											<m:Button text="Add to cart" type="Emphasized" press="onPressAddEventProductToShoppingCart"/>
+										</m:cells>
+									</m:ColumnListItem>
+								</m:items>
+								<m:columns>
+									<m:Column>
+										<m:header>
+											<m:Label text="{i18n>labelProductIDColumn}"/>
+										</m:header>
+									</m:Column>
+									<m:Column>
+										<m:header>
+											<m:Label text="{i18n>labelProductTextColumn}"/>
+										</m:header>
+									</m:Column>
+									<m:Column>
+										<m:header>
+											<m:Label text="Order quantity"/>
+										</m:header>
+									</m:Column>
+									<m:Column>
+										<m:header>
+											<m:Label text="Action"/>
+										</m:header>
+									</m:Column>
+								</m:columns>
+								<m:headerToolbar>
+									<m:OverflowToolbar>
+										<m:Title text="Event products"/>
+										<m:ToolbarSpacer/>
+										<m:SearchField width="auto" placeholder="Search" search="onEventProductSearch" liveChange=""/>
+										<m:OverflowToolbarButton type="Transparent" text="Sort" icon="sap-icon://sort" press="onEventProductListSort"/>
+									</m:OverflowToolbar>
+								</m:headerToolbar>
+							</m:Table>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection id="sectionShoppingCart">
+				<subSections>
+					<ObjectPageSubSection id="subSectionShoppingCart" title="Shopping cart">
+						<blocks>
+							<m:Table id="tabEventShoppingCartItemList" itemPress="onPressEventShoppingCartListItem"
+								items="{ path: 'FranchisePortal>toShoppingCartItems' }" noDataText="No entries" mode="SingleSelectMaster" backgroundDesign="Solid">
+								<m:items>
+									<m:ColumnListItem counter="0" press="onPressEventShoppingCartListItem" type="Active">
+										<m:cells>
+											<m:Text maxLines="1" text="{FranchisePortal>productID}"/>
+											<m:Text maxLines="1" text="{FranchisePortal>productText}"/>
+											<m:Input type="Number" value="{FranchisePortal>quantity}"/>
+											<m:Button text="Delete" type="Emphasized" press="onPressDeleteEventProductFromShoppingCart"/>
+										</m:cells>
+									</m:ColumnListItem>
+								</m:items>
+								<m:columns>
+									<m:Column>
+										<m:header>
+											<m:Label text="{i18n>labelProductIDColumn}"/>
+										</m:header>
+									</m:Column>
+									<m:Column>
+										<m:header>
+											<m:Label text="{i18n>labelProductTextColumn}"/>
+										</m:header>
+									</m:Column>
+									<m:Column>
+										<m:header>
+											<m:Label text="{i18n>labelOrderQuantityColumn}"/>
+										</m:header>
+									</m:Column>
+									<m:Column>
+										<m:header>
+											<m:Label text="Action"/>
+										</m:header>
+									</m:Column>
+								</m:columns>
+								<m:headerToolbar>
+									<m:OverflowToolbar>
+										<m:Title text="Event products"/>
+										<m:ToolbarSpacer/>
+										<m:Button type="Transparent" text="Save changes" icon="sap-icon://save" press="onEventShoppingCartSave"/>
+										<m:Button type="Emphasized" text="Place order" icon="sap-icon://customer-order-entry" press="onEventPlaceOrder"/>
+										<m:OverflowToolbarButton type="Transparent" text="Sort" icon="sap-icon://sort" press="onEventShoppingCartItemListSort"/>
+										<m:SearchField width="auto" placeholder="Search" search="onEventShoppingCartItemListSearch" liveChange=""/>
+									</m:OverflowToolbar>
+								</m:headerToolbar>
+							</m:Table>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection id="sectionOrderRequests">
+				<subSections>
+					<ObjectPageSubSection id="subSectionOrderRequests" title="Order requests">
+						<blocks>
+							<m:Table id="tabEventOrderRequestHeaderList" itemPress="onPressEventOrderRequestHeaderListItem"
+								items="{ path: 'FranchisePortal>toOrderRequestHeaders' }" noDataText="No entries" mode="SingleSelectMaster" backgroundDesign="Solid">
+								<m:items>
+									<m:ColumnListItem counter="0" press="onPressEventShoppingCartListItem" type="Active">
+										<m:cells>
+											<m:Text maxLines="1" text="{FranchisePortal>externalOrderID}"/>
+											<m:Button text="Display" type="Emphasized" press="onPressDisplayOrderRequest"/>
+										</m:cells>
+									</m:ColumnListItem>
+								</m:items>
+								<m:columns>
+									<m:Column>
+										<m:header>
+											<m:Label text="{i18n>labelExternalOrderIDColumn}"/>
+										</m:header>
+									</m:Column>
+									<m:Column>
+										<m:header>
+											<m:Label text="Action"/>
+										</m:header>
+									</m:Column>
+								</m:columns>
+								<m:headerToolbar>
+									<m:OverflowToolbar>
+										<m:Title text="Order requests"/>
+										<m:ToolbarSpacer/>
+										<m:Button type="Emphasized" text="Display order" icon="sap-icon://customer-order-entry" press="onEventDisplayOrder"/>
+										<m:OverflowToolbarButton type="Transparent" text="Sort" icon="sap-icon://sort" press="onEventOrderRequestItemListSort"/>
+										<m:SearchField width="auto" placeholder="Search" search="onEventOrderRequestHeaderItemListSearch" liveChange=""/>
+									</m:OverflowToolbar>
+								</m:headerToolbar>
+							</m:Table>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

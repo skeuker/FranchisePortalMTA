@@ -4,7 +4,7 @@
 			"title": "Home",
 			"icon": "sap-icon://home",
 			"expanded": true,
-			"key": "home"
+			"key": "Home"
 		},
 		{
 			"title": "Settings",

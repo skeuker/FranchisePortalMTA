@@ -1,0 +1,26 @@
+<mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:layout="sap.ui.layout"
+	xmlns:microchart="sap.ui.comp.smartmicrochart" controllerName="pnp.co.za.FranchisePortalOrdering.controller.EventsList" displayBlock="true">
+	<Page showHeader="false">
+		<UploadCollection change="onUploadCollectionChange" fileDeleted="onFileDeleted" fileType="jpg,png,bmp,pdf,docx,doc,png,gif,txt,xlsx,pptx"
+			id="ucDocUploadCollection" items="{ path: 'FranchisePortal>/Documents', factory: '.createUploadCollectionItem' }" maximumFileSize="10"
+			maximumFilenameLength="60" multiple="true" sameFilenameAllowed="false" typeMissmatch="onUploadFileTypeMismatch"
+			filenameLengthExceed="onUploadFileNameLengthExceed" uploadComplete="onPersonDocumentUploadComplete" uploadEnabled="false" uploadUrl="../"
+			noDataText="No entries. Click + to add" class="sapUiMediumMarginTop">
+			<toolbar>
+				<OverflowToolbar>
+					<Title text="Documents"/>
+					<ToolbarSpacer/>
+					<Label id="labelPersonDocumentTypes" required="true" text="Document type"/>
+					<ComboBox id="cboxPersonDocumentTypes" items="{ path: 'FranchisePortal>/DocumentTypes' }" selectionChange="onDocumentTypesChange"
+						width="300px">
+						<items>
+							<core:ListItem key="{FranchisePortal>documentTypeID}" text="{FranchisePortal>documentTypeText}"/>
+						</items>
+					</ComboBox>
+					<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
+				</OverflowToolbar>
+			</toolbar>
+		</UploadCollection>
+	</Page>
+</mvc:View>

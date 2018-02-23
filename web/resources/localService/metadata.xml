@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices m:DataServiceVersion="2.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+        <Schema Namespace="default" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="EventsType">
+                <Key>
+                    <PropertyRef Name="eventID"/>
+                </Key>
+                <Property Name="eventID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="eventText" Type="Edm.String" MaxLength="80"/>
+                <Property Name="validityStartDate" Type="Edm.DateTime" sap:display-format="Date"/>
+                <Property Name="validitEndDate" Type="Edm.DateTime" sap:display-format="Date"/>
+                <Property Name="thumbNailUrl" Type="Edm.String" MaxLength="120"/>
+                <NavigationProperty Name="toEventProducts" Relationship="default.Event_EventProductsType" FromRole="EventsPrincipal" ToRole="EventProductsDependent" sap:creatable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="ActiveEventsType">
+                <Key>
+                    <PropertyRef Name="eventID"/>
+                </Key>
+                <Property Name="eventID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="eventText" Type="Edm.String" MaxLength="80"/>
+                <Property Name="thumbNailUrl" Type="Edm.String" MaxLength="120"/>
+            </EntityType>
+            <EntityType Name="EventProductsType">
+                <Key>
+                    <PropertyRef Name="eventID"/>
+                    <PropertyRef Name="productID"/>
+                </Key>
+                <Property Name="eventID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="productID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="productText" Type="Edm.String" MaxLength="40"/>
+                <Property Name="thumbNailUrl" Type="Edm.String" MaxLength="120"/>
+                <Property Name="baseMerchCat" Type="Edm.String" MaxLength="20"/>
+                <Property Name="packSize" Type="Edm.Int32"/>
+                <Property Name="packPrice" Type="Edm.Decimal" Precision="10" Scale="2"/>
+                <Property Name="dealPrice" Type="Edm.Decimal" Precision="10" Scale="2"/>
+                <Property Name="barCode" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="DocumentsType">
+                <Key>
+                    <PropertyRef Name="documentID"/>
+                </Key>
+                <Property Name="documentID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="documentType" Type="Edm.String" MaxLength="80"/>
+                <Property Name="fileName" Type="Edm.String" MaxLength="100"/>
+                <Property Name="fileType" Type="Edm.String" MaxLength="80"/>
+                <Property Name="mimeType" Type="Edm.String" MaxLength="80"/>
+                <Property Name="documentContent" Type="Edm.String" MaxLength="2147483647"/>
+            </EntityType>
+            <EntityType Name="DocumentTypesType">
+                <Key/>
+                <Property Name="documentTypeID" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="documentTypeText" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <Association Name="Event_EventProductsType">
+                <End Type="default.EventsType" Role="EventsPrincipal" Multiplicity="1"/>
+                <End Type="default.EventProductsType" Role="EventProductsDependent" Multiplicity="*"/>
+            </Association>
+            <EntityContainer Name="v2" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="Events" EntityType="default.EventsType"/>
+                <EntitySet Name="ActiveEvents" EntityType="default.ActiveEventsType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
+                <EntitySet Name="EventProducts" EntityType="default.EventProductsType"/>
+                <EntitySet Name="Documents" EntityType="default.DocumentsType"/>
+                <EntitySet Name="DocumentTypes" EntityType="default.DocumentTypesType" sap:creatable="false" sap:updatable="false" sap:deletable="false"/>
+                <AssociationSet Name="Event_EventProducts" Association="default.Event_EventProductsType">
+                    <End Role="EventsPrincipal" EntitySet="Events"/>
+                    <End Role="EventProductsDependent" EntitySet="EventProducts"/>
+                </AssociationSet>
+            </EntityContainer>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

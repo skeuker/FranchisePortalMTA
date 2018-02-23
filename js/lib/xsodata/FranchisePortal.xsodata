@@ -1,8 +1,8 @@
 //OData service for Franchise Portal
 service  { 
 
-	//event with navigation property to event products
-   "FranchisePortal.Event" as "Events" navigates ("Event_EventProducts" as "toEventProducts" from principal);
+	//event with navigation properties
+   "FranchisePortal.Event" as "Events" navigates ("Event_Products" as "toProducts", "Event_ShoppingCartItems" as "toShoppingCartItems", "Event_OrderRequestHeaders" as "toOrderRequestHeaders");
    
    //active events
    "FranchisePortal.ActiveEvents" as "ActiveEvents" key ("eventID");
@@ -10,17 +10,35 @@ service  {
    //event products
    "FranchisePortal.EventProduct" as "EventProducts";  
    
+   //event shopping cart items
+   "FranchisePortal.EventShoppingCartItem" as "EventShoppingCartItems";  
+   
+   //Order request headers
+   "FranchisePortal.OrderRequestHeader" as "OrderRequestHeaders" navigates ("OrderRequestHeaders_OrderRequestItems" as "toItems");  
+   
+    //Order request items
+   "FranchisePortal.OrderRequestItem" as "OrderRequestItems";  
+   
    //documents
    "FranchisePortal.Document" as "Documents" create using "xsodata::createDocument" delete using "xsodata::deleteDocument";  
    
    //document types
-   "FranchisePortal.DocumentTypes" as "DocumentTypes"; 
+   "FranchisePortal.DocumentTypes" as "DocumentTypes" key("documentTypeID"); 
    
    //association between event and event products
-   association "Event_EventProducts" principal "Events"("eventID") multiplicity "1" dependent "EventProducts"("eventID") multiplicity "*";   
+   association "Event_Products" principal "Events"("eventID") multiplicity "1" dependent "EventProducts"("eventID") multiplicity "*";
+   
+   //association between event and shopping cart items
+   association "Event_ShoppingCartItems" principal "Events"("eventID") multiplicity "1" dependent "EventShoppingCartItems"("eventID") multiplicity "*";
+   
+   //association between event and order request headers
+   association "Event_OrderRequestHeaders" principal "Events"("eventID") multiplicity "1" dependent "OrderRequestHeaders"("eventID") multiplicity "*";
+   
+   //association between order request headers and order request items
+   association "OrderRequestHeaders_OrderRequestItems" principal "OrderRequestHeaders"("orderRequestID") multiplicity "1" dependent "OrderRequestItems"("orderRequestID") multiplicity "*";
    
 }
-
-annotations {
-   enable OData4SAP;
+settings {
+  content cache-control "no-store";
+  metadata cache-control "max-age=3600,must-revalidate";
 }
