@@ -2,20 +2,7 @@ ID: FranchisePortalMTA
 _schema-version: '2.0'
 version: 0.0.1
 modules:
-  - name: web
-    type: html5
-    path: web
-    requires:
-      - name: HANA2-uaa
-      - name: js_api
-        group: destinations
-        properties:
-          name: core-backend
-          url: '~{url}'
-          forwardAuthToken: .nan
-      - name: ui5-lib
-        properties:
-          ui5liburl: '~{url}'
+  
   - name: db
     type: hdb
     path: db

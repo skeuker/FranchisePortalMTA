@@ -1,7 +1,7 @@
 <mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f"
 	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:layout="sap.ui.layout"
 	xmlns:sv="sap.ui.comp.smartvariants" xmlns:microchart="sap.ui.comp.smartmicrochart"
-	controllerName="pnp.co.za.FranchisePortalOrdering.controller.EventsList" displayBlock="true" busy="{viewModel>/busy}">
+	controllerName="pnp.co.za.FranchisePortalAdmin.controller.EventsList" displayBlock="true" busy="{viewModel>/busy}">
 	<MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text=""/>
 	<f:DynamicPage id="dynamicEventListPage" toggleHeaderOnTitleClick="true" headerExpanded="true">
 		<f:title>

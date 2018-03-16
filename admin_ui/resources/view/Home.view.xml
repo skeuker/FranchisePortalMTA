@@ -1,4 +1,4 @@
-<mvc:View controllerName="pnp.co.za.FranchisePortalOrdering.controller.Home" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core"
+<mvc:View controllerName="pnp.co.za.FranchisePortalAdmin.controller.Home" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc" busy="{viewModel>/busy}">
 	<Page showHeader="false">
 		<l:BlockLayout id="BlockLayout" background="Light">
@@ -24,10 +24,10 @@
 				<l:BlockLayoutCell backgroundColorSet="ColorSet9" backgroundColorShade="ShadeA">
 					<l:VerticalLayout>
 						<core:Icon src="sap-icon://list" size="2.5rem" color="Default"/>
-						<Title text="{i18n>blockOrdersTitle}" titleStyle="H2" class="sapUiTinyMarginTopBottom"/>
-						<Text text="{i18n>blockOrdersText}" class="sapUiTinyMarginBottom"/>
-						<Link text="{i18n>blockOrdersAccessLink}"/>
-						<Link text="{i18n>blockOrdersLearnLink}"/>
+						<Title text="{i18n>blockDocumentsTitle}" titleStyle="H2" class="sapUiTinyMarginTopBottom"/>
+						<Text text="{i18n>blockDocumentsText}" class="sapUiTinyMarginBottom"/>
+						<Link text="{i18n>blockDocumentsAccessLink}"/>
+						<Link text="{i18n>blockDocumentsLearnLink}"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>

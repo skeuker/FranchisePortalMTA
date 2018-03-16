@@ -1,10 +1,10 @@
 sap.ui.define([
-	'pnp/co/za/FranchisePortalOrdering/controller/Base.controller',
+	'pnp/co/za/FranchisePortalAdmin/controller/Base.controller',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/Device'
 ], function(BaseController, JSONModel, Device) {
 	"use strict";
-	return BaseController.extend("pnp.co.za.FranchisePortalOrdering.controller.Event", {
+	return BaseController.extend("pnp.co.za.FranchisePortalAdmin.controller.Event", {
 
 		//initialize controller
 		onInit: function() {

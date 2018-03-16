@@ -1,5 +1,5 @@
 sap.ui.define([
-		'pnp/co/za/FranchisePortalOrdering/controller/Base.controller',
+		'pnp/co/za/FranchisePortalAdmin/controller/Base.controller',
 		'jquery.sap.global',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
@@ -18,7 +18,7 @@ sap.ui.define([
 	], function (BaseController, jQuery, Fragment, Controller, JSONModel, ResponsivePopover, MessagePopover, ActionSheet, Button, Link, Bar, VerticalLayout, NotificationListItem, MessagePopoverItem,CustomData, MessageToast) {
 		"use strict";
 
-		return BaseController.extend("pnp.co.za.FranchisePortalOrdering.controller.App", {
+		return BaseController.extend("pnp.co.za.FranchisePortalAdmin.controller.App", {
 
 			onInit: function() {
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());

@@ -1,5 +1,24 @@
 {
-	"welcomeFile": "webapp/index.html",
-	"authenticationMethod": "none",
-	"routes": []
+	"welcomeFile": "/index.html",
+	"authenticationMethod": "route",
+	"routes": [{
+		"source": "/xsjs/(.*)",
+		"destination": "core-backend",
+		"csrfProtection": false,
+		"authenticationType": "xsuaa",
+		"scope": "$XSAPPNAME.Edit"
+	}, {
+		"source": "/node/(.*)",
+		"destination": "core-backend",
+		"csrfProtection": false,
+		"authenticationType": "xsuaa",
+		"scope": "$XSAPPNAME.Edit"
+	}, {
+		"source": "^/(.*)",
+		"localDir": "resources",
+		"replace": {
+			"pathSuffixes": ["index.html"],
+			"vars": ["ui5liburl"]
+		}
+	}]
 }

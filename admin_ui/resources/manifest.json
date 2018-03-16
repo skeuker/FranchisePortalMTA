@@ -1,7 +1,7 @@
 {
 	"_version": "1.7.0",
 	"sap.app": {
-		"id": "pnp.co.za.FranchisePortalOrdering",
+		"id": "pnp.co.za.FranchisePortalAdmin",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"applicationVersion": {
@@ -56,7 +56,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "pnp.co.za.FranchisePortalOrdering.view.App",
+			"viewName": "pnp.co.za.FranchisePortalAdmin.view.App",
 			"type": "XML"
 		},
 		"dependencies": {
@@ -106,7 +106,7 @@
 				"controlId": "mainContents",
 				"viewType": "XML",
 				"controlAggregation": "pages",
-				"viewPath": "pnp.co.za.FranchisePortalOrdering.view",
+				"viewPath": "pnp.co.za.FranchisePortalAdmin.view",
 				"async": true
 			},
 			"routes": [
@@ -127,6 +127,14 @@
 					]
 				},
 				{
+					"name": "DocumentsList",
+					"pattern": "EventsList",
+					"greedy": false,
+					"target": [
+						"DocumentsList"
+					]
+				},				
+				{
 					"name": "Event",
 					"pattern": "Event/:eventID:",
 					"greedy": false,
@@ -143,16 +151,16 @@
 					"viewName": "Home",
 					"title": "Home",
 					"viewId": "Home",
-					"viewPath": "pnp.co.za.FranchisePortalOrdering.view"
+					"viewPath": "pnp.co.za.FranchisePortalAdmin.view"
 				},
-				"EventsList": {
+				"DocumentsList": {
 					"viewType": "XML",
 					"transition": "slide",
 					"clearAggregation": true,
 					"viewName": "EventsList",
 					"title": "Events List",
 					"viewId": "EventsList",
-					"viewPath": "pnp.co.za.FranchisePortalOrdering.view"
+					"viewPath": "pnp.co.za.FranchisePortalAdmin.view"
 				},
 				"Event": {
 					"viewType": "XML",
@@ -161,7 +169,7 @@
 					"viewName": "Event",
 					"title": "Event",
 					"viewId": "Event",
-					"viewPath": "pnp.co.za.FranchisePortalOrdering.view"
+					"viewPath": "pnp.co.za.FranchisePortalAdmin.view"
 				}
 			}
 		},

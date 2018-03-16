@@ -1,10 +1,10 @@
 sap.ui.define([
-		'pnp/co/za/FranchisePortalOrdering/controller/Base.controller',
+		'pnp/co/za/FranchisePortalAdmin/controller/Base.controller',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/Device'
 	], function (BaseController, JSONModel, Device) {
 		"use strict";
-		return BaseController.extend("pnp.co.za.FranchisePortalOrdering.controller.Home", {
+		return BaseController.extend("pnp.co.za.FranchisePortalAdmin.controller.Home", {
 			
 			//initialize controller
 			onInit: function () {
@@ -18,8 +18,8 @@ sap.ui.define([
 			},
 			
 			//access events list
-			onPressEventsLink: function(){
-				this.getRouter().navTo("EventsList");
+			onPressDocumentsLink: function(){
+				this.getRouter().navTo("DocumentsList");
 			}
 		});
 });

@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
-	"pnp/co/za/FranchisePortalOrdering/uuid"
+	"pnp/co/za/FranchisePortalAdmin/uuid"
 ], function(Controller, History, uuid) {
 	"use strict";
 
@@ -11,7 +11,7 @@ sap.ui.define([
 	 * @description Prototype of most other controllers
 	 * @module Base
 	 */
-	return Controller.extend("pnp.co.za.FranchisePortalOrdering.controller.Base", {
+	return Controller.extend("pnp.co.za.FranchisePortalAdmin.controller.Base", {
 
 		//on initialization
 		initialize: function() {

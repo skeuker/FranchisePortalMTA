@@ -1,10 +1,10 @@
 sap.ui.define([
-	'pnp/co/za/FranchisePortalOrdering/controller/Base.controller',
+	'pnp/co/za/FranchisePortalAdmin/controller/Base.controller',
 	"sap/ui/model/json/JSONModel",
 	"pnp/co/za/FranchisePortalOrdering/uuid"
 ], function(BaseController, JSONModel, uuid) {
 	"use strict";
-	return BaseController.extend("pnp.co.za.FranchisePortalOrdering.controller.EventsList", {
+	return BaseController.extend("pnp.co.za.FranchisePortalAdmin.controller.EventsList", {
 		/**
 		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
 		 * @public
