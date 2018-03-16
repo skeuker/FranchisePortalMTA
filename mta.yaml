@@ -2,9 +2,9 @@ ID: FranchisePortalMTA
 _schema-version: '2.0'
 version: 0.0.1
 modules:
-  - name: order_ui
+  - name: web
     type: html5
-    path: order_ui
+    path: web
     requires:
       - name: HANA2-uaa
       - name: js_api
@@ -12,7 +12,7 @@ modules:
         properties:
           name: core-backend
           url: '~{url}'
-          forwardAuthToken: true
+          forwardAuthToken: .nan
       - name: ui5-lib
         properties:
           ui5liburl: '~{url}'
@@ -32,11 +32,34 @@ modules:
       - name: HANA2-uaa
       - name: hdi-container
       - name: db
-
   - name: admin_ui
     type: html5
     path: admin_ui
-
+    requires:
+      - name: HANA2-uaa
+      - name: js_api
+        properties:
+          name: core-backend
+          url: '~{url}'
+          forwardAuthToken: true
+        group: destinations
+      - name: ui5-lib
+        properties:
+          ui5liburl: '~{url}'
+  - name: order_ui
+    type: html5
+    path: order_ui
+    requires:
+      - name: HANA2-uaa
+      - name: js_api
+        properties:
+          name: core-backend
+          url: '~{url}'
+          forwardAuthToken: true
+        group: destinations
+      - name: ui5-lib
+        properties:
+          ui5liburl: '~{url}'
 resources:
   - name: HANA2-uaa
     type: com.sap.xs.uaa-space

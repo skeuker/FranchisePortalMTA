@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8">
+
+		<title>FranchisePortalOrdering</title>
+		
+		<!--src="{{{ui5liburl}}}/resources/sap-ui-cachebuster/sap-ui-core.js"-->
+		<script id="sap-ui-bootstrap"
+			src="https://sapui5.hana.ondemand.com/resources/sap-ui-cachebuster/sap-ui-core.js"
+			data-sap-ui-libs="sap.m, sap.tnt"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-resourceroots='{"pnp.co.za.FranchisePortalOrdering": "./"}'
+			data-sap-ui-appCacheBuster="./">
+		</script>
+		
+		<script>
+			sap.ui.getCore().attachInit(function() {
+				new sap.ui.core.ComponentContainer({
+					name: "pnp.co.za.FranchisePortalOrdering"
+				}).placeAt("content");
+			});
+		</script>
+
+	</head>
+
+	<body class="sapUiBody" id="content">
+	</body>
+
+</html>

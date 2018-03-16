@@ -1,0 +1,73 @@
+<mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f"
+	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:layout="sap.ui.layout"
+	xmlns:sv="sap.ui.comp.smartvariants" xmlns:microchart="sap.ui.comp.smartmicrochart"
+	controllerName="pnp.co.za.FranchisePortalOrdering.controller.EventsList" displayBlock="true" busy="{viewModel>/busy}">
+	<MessageStrip id="msMessageStrip" showCloseButton="true" showIcon="true" text=""/>
+	<f:DynamicPage id="dynamicEventListPage" toggleHeaderOnTitleClick="true" headerExpanded="true">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<sv:SmartVariantManagement id="smartVariantManageEventList" persistencyKey="fiori.test.application2.view.S4" showShare="true"
+						showExecuteOnSelection="true"/>
+				</f:heading>
+				<f:snappedContent>
+					<Text id="statusText"></Text>
+				</f:snappedContent>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader>
+				<f:content>
+					<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Events" persistencyKey="fiori.test.application2.view.S4.FilterBar" enableBasicSearch="false"
+						smartVariant="smartVariantManageEventList" considerSelectionVariants="true" useToolbar="false" assignedFiltersChanged="onAssignedFiltersChanged">
+						<!-- layout data used to make the table growing but the filter bar fixed -->
+						<smartFilterBar:layoutData>
+							<FlexItemData shrinkFactor="0"/>
+						</smartFilterBar:layoutData>
+					</smartFilterBar:SmartFilterBar>
+				</f:content>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<smartTable:SmartTable id="eventsSmartTable" entitySet="Events" enableAutoBinding="true" smartFilterId="smartFilterBar"
+				tableType="ResponsiveTable" useExportToExcel="true" useVariantManagement="false" beforeExport="onBeforeExportEventsList"
+				useTablePersonalisation="true" showTablePersonalisation="true" showRowCount="true" header="Events" height="100%"
+				persistencyKey="SmartTableAnalytical_Explored" showFullScreenButton="true" class="sapUiResponsiveContentPadding">
+				<smartTable:customToolbar>
+					<OverflowToolbar design="Transparent">
+						<ToolbarSpacer/>
+						<Button icon="sap-icon://download" text="Download" press="onPressEventsListDownload" type="Transparent"/>
+					</OverflowToolbar>
+				</smartTable:customToolbar>
+				<Table id="tabEventsList" itemPress="onPressEventsListItem" mode="SingleSelectMaster">
+					<columns>
+						<Column hAlign="End" width="100px" hAlig="End">
+							<header><Text text="Download" textAlign="End"/></header>
+							<customData>
+								<core:CustomData key="p13nData" value='\{"columnIndex":"6"}'/>
+							</customData>
+						</Column>
+						<Column width="150px" hAlign="Begin">
+							<header><Text text="Order status" textAlign="End"/></header>
+							<customData>
+								<core:CustomData key="p13nData" value='\{"columnIndex":"5"}'/>
+							</customData>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem counter="0" type="Active">
+							<cells>
+								<Button text="Download" type="Transparent"/>
+								<microchart:SmartBulletMicroChart id="ItemsSmartBulletMicroChart" entitySet="Events"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<!-- layout data used to make the table growing but the filter bar fixed -->
+				<smartTable:layoutData>
+					<FlexItemData growFactor="1" baseSize="0%"/>
+				</smartTable:layoutData>
+			</smartTable:SmartTable>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>
