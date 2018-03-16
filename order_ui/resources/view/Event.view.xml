@@ -139,6 +139,7 @@
 									<m:ColumnListItem counter="0" press="onPressEventShoppingCartListItem" type="Active">
 										<m:cells>
 											<m:Text maxLines="1" text="{FranchisePortal>externalOrderID}"/>
+											<m:Text text="{FranchisePortal>storeID}"/>
 											<m:Button text="Display" type="Emphasized" press="onPressDisplayOrderRequest"/>
 										</m:cells>
 									</m:ColumnListItem>
@@ -147,6 +148,11 @@
 									<m:Column>
 										<m:header>
 											<m:Label text="{i18n>labelExternalOrderIDColumn}"/>
+										</m:header>
+									</m:Column>
+									<m:Column>
+										<m:header>
+											<m:Label text="{i18n>labelStoreID}"/>
 										</m:header>
 									</m:Column>
 									<m:Column>

@@ -2,9 +2,9 @@ ID: FranchisePortalMTA
 _schema-version: '2.0'
 version: 0.0.1
 modules:
-  - name: web
+  - name: order_ui
     type: html5
-    path: web
+    path: order_ui
     requires:
       - name: HANA2-uaa
       - name: js_api
@@ -32,6 +32,11 @@ modules:
       - name: HANA2-uaa
       - name: hdi-container
       - name: db
+
+  - name: admin_ui
+    type: html5
+    path: admin_ui
+
 resources:
   - name: HANA2-uaa
     type: com.sap.xs.uaa-space

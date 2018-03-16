@@ -22,7 +22,7 @@
 		//execute sql statement for order request header insert and handle callback
 		req.db.exec(sSqlHeaderInsert, function(oSqlError, rows) {
 
-			//exception handling: sql error
+			//continue waterfall
 			callback(oSqlError);
 
 		});
@@ -53,29 +53,12 @@
 			});
 
 			//insert items
-			oStatement.exec(aItemRows, function(oError, rows) {
+			oStatement.exec(aItemRows, function(oSqlError, rows) {
 
-				//exception handling: sql error
+				//continue waterfall
 				callback(oSqlError);
 
 			});
-
-		});
-
-	}
-
-	//delete shopping cart items
-	function deleteShoppingCartItems(callback) {
-
-		//construct sql for shopping cart item removal
-		var sSqlShoppingCartDelete = sqlstring.format('delete from "FranchisePortal.EventShoppingCartItem" where "eventID" = ?',
-			req.body.header.eventID);
-
-		//execute sql statement for shopping cart delete and handle callback
-		req.db.exec(sSqlShoppingCartDelete, function(oSqlError, rows) {
-
-			//exception handling: sql error
-			callback(oSqlError);
 
 		});
 
@@ -85,7 +68,6 @@
 	function placeOrder(callback) {
 
 		//local data declaration
-		var oOrderData = {};
 		var sOrderNumber = "4500000123";
 
 		//construct basic authentication header
@@ -93,27 +75,125 @@
 		var sb64Credentials = new Buffer(sCredentials).toString('base64');
 		var sAuthenticationToken = "Basic " + sb64Credentials;
 
-		//forward order to NetWeaver Gateway on premise
+		//get CSRF token by performing GET request
 		request({
-			uri: "https://gw.pnp.co.za/sap/opu/odata/blw/sam_ui5_srv/ParticipantSet?$format=json",
-			method: "GET",
-			json: true,
-			body: JSON.stringify(oOrderData),
-			headers: {
-				"Authorization": sAuthenticationToken
+				uri: "https://gw.pnp.co.za:443/sap/opu/odata/pnp/rt_purchase_order_srv/$metadata",
+				method: "GET",
+				headers: {
+					"Authorization": sAuthenticationToken,
+					"x-csrf-token": "Fetch"
+				},
+				jar: true, //put cookies in the jar, required to ensure cokies are include in POST call
+				agentOptions: {
+					"rejectUnauthorized": false //override SSL server issue UNABLE_TO_GET_ISSUER_CERT_LOCALLY
+				}
 			},
-			agentOptions: {
-				"rejectUnauthorized": false	//override SSL server issue UNABLE_TO_GET_ISSUER_CERT_LOCALLY
-			}
-		}, function(err, response, responseBody) {
 
-			//extract order number from response body
-			if (responseBody) {
-				sOrderNumber = "4600000321";
-			}
+			//CSRF token request callback 
+			function(err, response, responseBody) {
 
-			//end of waterfall with order number
-			callback(null, sOrderNumber);
+				//request exception handling
+				if (err) {
+					callback(err);
+				}
+
+				//get order request information
+				var oOrderRequest = req.body;
+
+				//create stub of PO create input
+				var oPOCreateInput = {
+					CompanyCode: "1000",
+					PurchaseDocType: "NB",
+					VendorID: "MA05",
+					PurchaseOrganisationID: "1010",
+					PurchaseGroup: "101",
+					toPurchaseOrderItems: []
+				};
+
+				//add purchase order items to PO create input
+				var PurchaseOrderItemID = 1;
+				oOrderRequest.items.forEach(function(oOrderRequestItem) {
+					oPOCreateInput.toPurchaseOrderItems.push({
+						PurchaseOrderItemID: oOrderRequestItem.itemID.toString(),
+						MaterialID: oOrderRequestItem.productID,
+						PlantID: "WC21",
+						Quantity: oOrderRequestItem.quantity,
+						UnitOfMeasure: "EA",
+						NetValue: "14.50"
+					});
+					PurchaseOrderItemID++;
+				});
+
+				//create purchase order in gateway backend
+				request({
+						uri: "https://gw.pnp.co.za/sap/opu/odata/pnp/rt_purchase_order_srv/PurchaseOrderHeaderSet",
+						method: "POST",
+						body: JSON.stringify(oPOCreateInput),
+						headers: {
+							"Authorization": sAuthenticationToken,
+							"x-csrf-token": response.headers["x-csrf-token"],
+							"Content-Type": "application/json",
+							"Accept": "application/json"
+						},
+						jar: true, //send cookies contained in the jar
+						agentOptions: {
+							"rejectUnauthorized": false //override SSL server issue UNABLE_TO_GET_ISSUER_CERT_LOCALLY
+						}
+					},
+
+					//create purchase order callback
+					function(err, response, responseBody) {
+
+						//request exception handling
+						if (err) {
+							callback(err);
+						}
+
+						//get purchase order number
+						var oPOCreateOutput = JSON.parse(responseBody);
+
+						//extract order number from response body
+						sOrderNumber = oPOCreateOutput.d.PurchaseOrderID;
+
+						//continue waterfall
+						callback(null, sOrderNumber);
+
+					});
+
+			});
+
+	}
+
+	//update order request header
+	function updateOrderRequestHeader(sOrderNumber, callback) {
+
+		//construct sql to update SAP purchase order number as external reference into order request header
+		var sSqlOrderRequestHeaderUpdate = sqlstring.format(
+			'update "FranchisePortal.OrderRequestHeader" set "externalOrderID" = ? where "orderRequestID" = ?', [sOrderNumber, req.body.header.orderRequestID]
+		);
+
+		//execute sql statement to update order number into order request header and handle callback
+		req.db.exec(sSqlOrderRequestHeaderUpdate, function(oSqlError, rows) {
+
+			//continue waterfall promoting order number on
+			callback(oSqlError, sOrderNumber);
+
+		});
+
+	}
+
+	//delete shopping cart items
+	function deleteShoppingCartItems(sOrderNumber, callback) {
+
+		//construct sql for shopping cart item removal
+		var sSqlShoppingCartDelete = sqlstring.format('delete from "FranchisePortal.EventShoppingCartItem" where "eventID" = ?',
+			req.body.header.eventID);
+
+		//execute sql statement for shopping cart delete and handle callback
+		req.db.exec(sSqlShoppingCartDelete, function(oSqlError, rows) {
+
+			//continue waterfall promoting order number
+			callback(oSqlError, sOrderNumber);
 
 		});
 
@@ -168,8 +248,9 @@
 			async.waterfall([
 				insertOrderRequestHeader,
 				insertOrderRequestItems,
-				deleteShoppingCartItems,
-				placeOrder
+				placeOrder,
+				updateOrderRequestHeader,
+				deleteShoppingCartItems
 			], postProcess);
 
 		});
