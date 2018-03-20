@@ -72,7 +72,7 @@ sap.ui.define([
 			var oEventProduct = oProductCatalogListItem.getBindingContext("FranchisePortal").getObject();
 
 			//get quantity ordered
-			var iQuantityOrdered = Number(oProductCatalogListItem.getCells()[2].getValue());
+			var iQuantityOrdered = Number(oProductCatalogListItem.getCells()[3].getValue());
 
 			//message handling: no quantity specified
 			if (!iQuantityOrdered > 0) {
@@ -178,7 +178,7 @@ sap.ui.define([
 					this.getView().byId("tabEventShoppingCartItemList").getBinding("items").refresh();
 
 					//reset order quantity attribute
-					oProductCatalogListItem.getCells()[2].setValue(null);
+					oProductCatalogListItem.getCells()[3].setValue(null);
 
 					//message handling
 					this.oMessageStrip.setText(this.oResourceBundle.getText("messageShoppingCartItemAddedSuccessfully"));

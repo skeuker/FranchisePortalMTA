@@ -34,14 +34,20 @@
 								<m:items>
 									<m:ColumnListItem counter="0" press="onPressEventProductListItem" type="Active">
 										<m:cells>
+											<m:Image src="{= ${FranchisePortal>thumbNailUrl} }" width="5em" densityAware="false"/>
 											<m:Text maxLines="1" text="{FranchisePortal>productID}"/>
 											<m:Text maxLines="1" text="{FranchisePortal>productText}"/>
-											<m:Input type="Number"/>
+											<m:Input type="Number" width="80px"/>
 											<m:Button text="Add to cart" type="Emphasized" press="onPressAddEventProductToShoppingCart"/>
 										</m:cells>
 									</m:ColumnListItem>
 								</m:items>
 								<m:columns>
+									<m:Column>
+										<m:header>
+											<m:Label text="{i18n>labelProductImage}"/>
+										</m:header>
+									</m:Column>
 									<m:Column>
 										<m:header>
 											<m:Label text="{i18n>labelProductIDColumn}"/>
