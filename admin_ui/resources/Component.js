@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"pnp/co/za/FranchisePortalOrdering/model/models"
+	"pnp/co/za/FranchisePortalAdmin/model/models"
 ], function(UIComponent, Device, models) {
 	"use strict";
 
-	return UIComponent.extend("pnp.co.za.FranchisePortalOrdering.Component", {
+	return UIComponent.extend("pnp.co.za.FranchisePortalAdmin.Component", {
 
 		metadata: {
 			manifest: "json"

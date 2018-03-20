@@ -16,9 +16,6 @@ sap.ui.define([
 			this.oODataModel = this.getOwnerComponent().getModel("FranchisePortal");
 			this.i18nModel = this.getOwnerComponent().getModel("i18n");
 			
-			//set model to smart table as direct model connection is required
-			this.byId("eventsSmartTable").setModel(this.oODataModel);
-			
 			//attach view to this OData Model
 			this.getView().setModel(this.i18nModel, "i18n");
 			this.getView().setModel(this.oODataModel);

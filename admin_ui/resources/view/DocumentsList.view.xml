@@ -1,6 +1,6 @@
 <mvc:View xmlns:html="http://www.w3.org/1999/xhtml" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
 	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:layout="sap.ui.layout"
-	xmlns:microchart="sap.ui.comp.smartmicrochart" controllerName="pnp.co.za.FranchisePortalAdmin.controller.EventsList" displayBlock="true">
+	xmlns:microchart="sap.ui.comp.smartmicrochart" controllerName="pnp.co.za.FranchisePortalAdmin.controller.DocumentsList" displayBlock="true">
 	<Page showHeader="false">
 		<UploadCollection change="onUploadCollectionChange" fileDeleted="onFileDeleted" fileType="jpg,png,bmp,pdf,docx,doc,png,gif,txt,xlsx,pptx"
 			id="ucDocUploadCollection" items="{ path: 'FranchisePortal>/Documents', factory: '.createUploadCollectionItem' }" maximumFileSize="10"

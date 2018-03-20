@@ -128,7 +128,7 @@
 				},
 				{
 					"name": "DocumentsList",
-					"pattern": "EventsList",
+					"pattern": "DocumentsList",
 					"greedy": false,
 					"target": [
 						"DocumentsList"
@@ -157,9 +157,9 @@
 					"viewType": "XML",
 					"transition": "slide",
 					"clearAggregation": true,
-					"viewName": "EventsList",
-					"title": "Events List",
-					"viewId": "EventsList",
+					"viewName": "DocumentsList",
+					"title": "Documents List",
+					"viewId": "DocumentsList",
 					"viewPath": "pnp.co.za.FranchisePortalAdmin.view"
 				},
 				"Event": {
