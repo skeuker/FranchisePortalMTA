@@ -87,9 +87,9 @@
 					"sequentializeRequests": true
 				}
 			},
-			"side": {
+			"sideNavigation": {
 				"type": "sap.ui.model.json.JSONModel",
-				"uri": "model/sideContent.json"
+				"uri": "model/sideNavigation.json"
 			},
 			"alerts": {
 				"type": "sap.ui.model.json.JSONModel",

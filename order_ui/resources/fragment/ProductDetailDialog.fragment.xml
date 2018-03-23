@@ -1,0 +1,28 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout">
+	<Dialog id="diaProductDetail" title="{i18n>titleProductDetailDialog}" class="sapUiContentPadding" placement="Bottom" contentWidth="700px">
+		<content>
+			<MessageStrip id="msDialogMessageStrip" showCloseButton="true" showIcon="true" text="" visible="false"/>
+			<layout:Grid class="sapUiSmallMarginTop" hSpacing="2" defaultSpan="L6 M6 S10">
+				<layout:content>
+					<Image src="{FranchisePortal>thumbNailUrl}" width="100%" densityAware="false">
+						<layoutData>
+							<layout:GridData linebreak="true"/>
+						</layoutData>
+					</Image>
+					<VBox>
+						<HBox alignItems="Center">
+							<Label text="Order quanity" labelFor="inpProductDetailDialogOrderQuantity"/>
+							<Input id="inpProductDetailDialogOrderQuantity" type="Number" width="80px" class="sapUiSmallMarginBegin"/>
+							<Button icon="sap-icon://add" press="incrementProductDetailDialogOrderQuantity" type="Transparent" class="sapUiTinyMarginBegin"/>
+							<Button icon="sap-icon://less" press="decrementProductDetailDialogOrderQuantity" type="Transparent"/>
+						</HBox>
+						<Button class="sapUiMediumMarginTop" text="{viewModel>/buttonTextProductDetailDialogAddToCart}" press="onPressProductDetailDialogAddToCart"/>
+					</VBox>
+				</layout:content>
+			</layout:Grid>
+		</content>
+		<endButton>
+			<Button text="Close" type="Emphasized" press="onPressProductDetailDialogCloseButton"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

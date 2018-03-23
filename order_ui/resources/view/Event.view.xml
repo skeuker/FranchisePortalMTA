@@ -36,7 +36,7 @@
 										<m:cells>
 											<m:Image src="{= ${FranchisePortal>thumbNailUrl} }" width="5em" densityAware="false"/>
 											<m:Text maxLines="1" text="{FranchisePortal>productID}"/>
-											<m:Text maxLines="1" text="{FranchisePortal>productText}"/>
+											<m:Link text="{FranchisePortal>productText}" press="onPressProductCatalogItemProductLink"/>
 											<m:Input type="Number" width="80px"/>
 											<m:Button text="Add to cart" type="Emphasized" press="onPressAddEventProductToShoppingCart"/>
 										</m:cells>
@@ -53,7 +53,7 @@
 											<m:Label text="{i18n>labelProductIDColumn}"/>
 										</m:header>
 									</m:Column>
-									<m:Column>
+									<m:Column width="40%">
 										<m:header>
 											<m:Label text="{i18n>labelProductTextColumn}"/>
 										</m:header>
@@ -92,7 +92,7 @@
 									<m:ColumnListItem counter="0" press="onPressEventShoppingCartListItem" type="Active">
 										<m:cells>
 											<m:Text maxLines="1" text="{FranchisePortal>productID}"/>
-											<m:Text maxLines="1" text="{FranchisePortal>productText}"/>
+											<m:Link text="{FranchisePortal>productText}" press="onPressShoppingCartItemProductLink"/>
 											<m:Input type="Number" value="{FranchisePortal>quantity}"/>
 											<m:Button text="Delete" type="Emphasized" press="onPressDeleteEventProductFromShoppingCart"/>
 										</m:cells>

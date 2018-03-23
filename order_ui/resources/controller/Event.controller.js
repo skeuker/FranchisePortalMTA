@@ -60,16 +60,12 @@ sap.ui.define([
 
 		//on press to add event product to shopping cart
 		onPressAddEventProductToShoppingCart: function(oEvent) {
-			
-			//local data declaration
-			var oExistingShoppingCartListItem = null;
-			var	oExistingShoppingCartItem = null;
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
 
 			//get list item that should be added to shopping cart
 			var oProductCatalogListItem = oEvent.getSource().getParent();
-
-			//get event product to be added
-			var oEventProduct = oProductCatalogListItem.getBindingContext("FranchisePortal").getObject();
 
 			//get quantity ordered
 			var iQuantityOrdered = Number(oProductCatalogListItem.getCells()[3].getValue());
@@ -85,13 +81,32 @@ sap.ui.define([
 
 			}
 
+			//check for existing cart item and add
+			this.checkForExistingItemAndAddToCart({
+				reference: oProductCatalogListItem,
+				type: "Catalog"
+			}, iQuantityOrdered);
+
+		},
+
+		//check for existing item and add to shopping cart
+		checkForExistingItemAndAddToCart: function(oListItemSource, iQuantityOrdered) {
+
+			//local data declaration
+			var oExistingShoppingCartListItem = null;
+			var oExistingShoppingCartItem = null;
+
+			//get event product to be added
+			var oEventProduct = oListItemSource.reference.getBindingContext("FranchisePortal").getObject();
+
 			//get shopping cart items that contain this product
-			var aExistingShoppingCartListItems = this.getView().byId("tabEventShoppingCartItemList").getItems().filter(function(oShoppingCartListItem){
+			var aExistingShoppingCartListItems = this.getView().byId("tabEventShoppingCartItemList").getItems().filter(function(
+				oShoppingCartListItem) {
 				var oShoppingCartItem = oShoppingCartListItem.getBindingContext("FranchisePortal").getObject();
-				var bMatch = oShoppingCartItem.productID === oEventProduct.productID? true : false;
+				var bMatch = oShoppingCartItem.productID === oEventProduct.productID ? true : false;
 				return bMatch;
 			});
-			
+
 			//present dialog whether to add quantity or replace
 			if (aExistingShoppingCartListItems.length > 0) {
 
@@ -110,14 +125,14 @@ sap.ui.define([
 						text: "Add",
 						press: function() {
 							iQuantityOrdered = iQuantityOrdered + oExistingShoppingCartItem.quantity;
-							this.addEventProductToShoppingCart(iQuantityOrdered, oProductCatalogListItem, oExistingShoppingCartListItem);
+							this.upsertEventProductInShoppingCart(iQuantityOrdered, oListItemSource, oExistingShoppingCartListItem);
 							oOptionDialog.close();
 						}.bind(this)
 					}),
 					endButton: new sap.m.Button({
 						text: "Replace",
 						press: function() {
-							this.addEventProductToShoppingCart(iQuantityOrdered, oProductCatalogListItem, oExistingShoppingCartListItem);
+							this.upsertEventProductInShoppingCart(iQuantityOrdered, oListItemSource, oExistingShoppingCartListItem);
 							oOptionDialog.close();
 						}.bind(this)
 					}),
@@ -136,19 +151,22 @@ sap.ui.define([
 			}
 
 			//add product to shopping cart
-			this.addEventProductToShoppingCart(iQuantityOrdered, oProductCatalogListItem, oExistingShoppingCartListItem);
+			this.upsertEventProductInShoppingCart(iQuantityOrdered, oListItemSource, oExistingShoppingCartListItem);
 
 		},
 
 		//add event product to shopping cart
-		addEventProductToShoppingCart: function(iQuantityOrdered, oProductCatalogListItem, oExistingShoppingCartListItem) {
+		upsertEventProductInShoppingCart: function(iQuantityOrdered, oListItemSource, oExistingShoppingCartListItem) {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
 
 			//get event product to be added
-			var oEventProduct = oProductCatalogListItem.getBindingContext("FranchisePortal").getObject();
+			var oEventProduct = oListItemSource.reference.getBindingContext("FranchisePortal").getObject();
 
 			//create or update existing shopping cart item
 			if (!oExistingShoppingCartListItem) {
-				
+
 				//create new shopping cart entry where no shopping cart item exists yet
 				this.oODataModel.createEntry("EventShoppingCartItems", {
 					properties: {
@@ -158,11 +176,13 @@ sap.ui.define([
 						quantity: iQuantityOrdered
 					}
 				});
-			}else{
-				
+
+			} else {
+
 				//update existing shopping cart item
-				this.oODataModel.setProperty(oExistingShoppingCartListItem.getBindingContext("FranchisePortal").getPath() + '/quantity', iQuantityOrdered);
-				
+				this.oODataModel.setProperty(oExistingShoppingCartListItem.getBindingContext("FranchisePortal").getPath() + '/quantity',
+					iQuantityOrdered);
+
 			}
 
 			//view is now busy
@@ -172,19 +192,22 @@ sap.ui.define([
 			this.oODataModel.submitChanges({
 
 				//successfully submitted changes
-				success: (function() {
+				success: (function(oData) {
 
 					//refresh binding of shopping cart
 					this.getView().byId("tabEventShoppingCartItemList").getBinding("items").refresh();
 
-					//reset order quantity attribute
-					oProductCatalogListItem.getCells()[3].setValue(null);
+					//reset order quantity attribute where ordering from product catalog listing
+					if (oListItemSource.type === "Catalog") {
+						oListItemSource.reference.getCells()[3].setValue(null);
+					}
 
-					//message handling
-					this.oMessageStrip.setText(this.oResourceBundle.getText("messageShoppingCartItemAddedSuccessfully"));
-					this.oMessageStrip.setType(sap.ui.core.MessageType.Success);
-					this.oMessageStrip.setVisible(true);
-
+					//message handling: successfully added/update item in shopping cart
+					if (!oExistingShoppingCartListItem) {
+						this.sendStripMessage(this.oResourceBundle.getText("messageShoppingCartItemAddedSuccessfully"), sap.ui.core.MessageType.Success);
+					} else {
+						this.sendStripMessage(this.oResourceBundle.getText("messageShoppingCartItemUpdatedSuccessfully"), sap.ui.core.MessageType.Success);
+					}
 					//view is no longer busy
 					this.oViewModel.setProperty("/busy", false);
 
@@ -236,6 +259,9 @@ sap.ui.define([
 
 		//delete shopping cart item
 		onPressDeleteEventProductFromShoppingCart: function(oEvent) {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
 
 			//get list item to be removed
 			var oListItemContext = oEvent.getSource().getParent().getBindingContext("FranchisePortal");
@@ -359,6 +385,148 @@ sap.ui.define([
 
 				}.bind(this)
 			});
+
+		},
+
+		//on press product catalog item product link
+		onPressProductCatalogItemProductLink: function(oEvent) {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//get product entity OData binding context
+			var oProductCatalogListItem = oEvent.getSource().getParent();
+
+			//construct dialog to display product details
+			this.oProductDetailDialog = sap.ui.xmlfragment("pnp.co.za.FranchisePortalOrdering.fragment.ProductDetailDialog", this);
+			this.oProductDetailDialog.attachAfterClose(function() {
+				this.oProductDetailDialog.destroy();
+			}.bind(this));
+			this.getView().addDependent(this.oProductDetailDialog);
+
+			//bind dialog to product entity instance
+			this.oProductDetailDialog.setBindingContext(oProductCatalogListItem.getBindingContext("FranchisePortal"), "FranchisePortal");
+			this.oProductDetailDialog.oProductCatalogListItem = oProductCatalogListItem;
+
+			//set applicable view model attributes
+			this.oViewModel.setProperty("/buttonTextProductDetailDialogAddToCart", "Add to cart");
+
+			//open product detail dialog
+			this.oProductDetailDialog.open();
+
+		},
+
+		//on press shopping cart item product link
+		onPressShoppingCartItemProductLink: function(oEvent) {
+
+			//prepare view for next action
+			this.prepareViewForNextAction();
+
+			//get product entity OData binding context
+			var oShoppingCartListItem = oEvent.getSource().getParent();
+
+			//construct dialog to display product details
+			this.oProductDetailDialog = sap.ui.xmlfragment("pnp.co.za.FranchisePortalOrdering.fragment.ProductDetailDialog", this);
+			this.oProductDetailDialog.attachAfterClose(function() {
+				this.oProductDetailDialog.destroy();
+			}.bind(this));
+			this.getView().addDependent(this.oProductDetailDialog);
+
+			//create binding context for product of this shopping cart item
+			var oShoppingCartItem = oShoppingCartListItem.getBindingContext("FranchisePortal").getObject();
+			var sEventProductPath = "/EventProducts(eventID='" + oShoppingCartItem.eventID + "'," + "productID='" + oShoppingCartItem.productID +
+				"')";
+			var oEventProductBindingContext = this.oODataModel.createBindingContext(sEventProductPath);
+
+			//bind dialog to product entity instance
+			this.oProductDetailDialog.setBindingContext(oEventProductBindingContext, "FranchisePortal");
+			this.oProductDetailDialog.oShoppingCartListItem = oShoppingCartListItem;
+
+			//set applicable view model attributes
+			this.oViewModel.setProperty("/buttonTextProductDetailDialogAddToCart", "Update cart");
+
+			//set order quantity input field from existing shopping cart item
+			var oInpOrderQuantity = sap.ui.getCore().byId("inpProductDetailDialogOrderQuantity");
+			oInpOrderQuantity.setValue(oShoppingCartItem.quantity);
+
+			//open product detail dialog
+			this.oProductDetailDialog.open();
+
+		},
+
+		//on press to add event product to shopping cart from Product detail dialog
+		onPressProductDetailDialogAddToCart: function(oEvent) {
+
+			//get quantity ordered
+			var iQuantityOrdered = Number(sap.ui.getCore().byId("inpProductDetailDialogOrderQuantity").getValue());
+
+			//message handling: no quantity specified
+			if (!iQuantityOrdered > 0) {
+
+				//send message to message strip
+				this.sendStripMessage(this.getResourceBundle().getText("messageNoProductQuantitySpecifiedForAdd"), sap.ui.core.MessageType.Warning);
+
+				//no further processing
+				return;
+
+			}
+
+			//when coming from product catalog: check for existing cart item and add
+			if (this.oProductDetailDialog.oProductCatalogListItem) {
+				this.checkForExistingItemAndAddToCart({
+					reference: this.oProductDetailDialog.oProductCatalogListItem,
+					type: "Catalog"
+				}, iQuantityOrdered);
+			}
+
+			//when coming from shopping cart: update shopping cart item quantity
+			if (this.oProductDetailDialog.oShoppingCartListItem) {
+
+				//update quantity of shopping cart item
+				this.upsertEventProductInShoppingCart(iQuantityOrdered, {
+					reference: this.oProductDetailDialog.oShoppingCartListItem,
+					type: "ShoppingCart"
+				}, this.oProductDetailDialog.oShoppingCartListItem);
+
+			}
+
+		},
+
+		//close product detail dialog
+		onPressProductDetailDialogCloseButton: function() {
+
+			//close product detail dialog
+			this.oProductDetailDialog.close();
+
+		},
+
+		//increment order quantity on product detail dialog
+		incrementProductDetailDialogOrderQuantity: function() {
+
+			//get order quantity input field
+			var oInpOrderQuantity = sap.ui.getCore().byId("inpProductDetailDialogOrderQuantity");
+
+			//get current order quanity input
+			var currentOrderQuantity = Number(oInpOrderQuantity.getValue());
+
+			//set new order quanity input as current + 1
+			oInpOrderQuantity.setValue(currentOrderQuantity += 1);
+
+		},
+
+		//decrement order quantity on product detail dialog
+		decrementProductDetailDialogOrderQuantity: function() {
+
+			//get order quantity input field
+			var oInpOrderQuantity = sap.ui.getCore().byId("inpProductDetailDialogOrderQuantity");
+
+			//get current order quanity input
+			var currentOrderQuantity = Number(oInpOrderQuantity.getValue());
+
+			//set new order quanity input as current - 1
+			if (currentOrderQuantity >= 1) {
+				oInpOrderQuantity.setValue(currentOrderQuantity -= 1);
+			}
 
 		}
 

@@ -59,27 +59,27 @@
 				expanded="true"
 				itemSelect="onItemSelect">
 				<tnt:NavigationList
-					items="{path: 'side>/navigation', templateShareable: false}">
+					items="{path: 'sideNavigation>/navigation', templateShareable: false}">
 					<tnt:NavigationListItem
-						text="{side>title}"
-						icon="{side>icon}"
-						expanded="{side>/expanded}"
-						items="{path: 'side>items', templateShareable: false}"
-						key="{side>key}">
+						text="{sideNavigation>title}"
+						icon="{sideNavigation>icon}"
+						expanded="{sideNavigation>/expanded}"
+						items="{path: 'sideNavigation>items', templateShareable: false}"
+						key="{sideNavigation>key}">
 						<tnt:NavigationListItem
-							text="{side>title}"
-							key="{side>key}"
-							enabled="{side>enabled}">
+							text="{sideNavigation>title}"
+							key="{sideNavigation>key}"
+							enabled="{sideNavigation>enabled}">
 						</tnt:NavigationListItem>
 					</tnt:NavigationListItem>
 				</tnt:NavigationList>
 				<tnt:fixedItem>
 					<tnt:NavigationList
-						items="{path: 'side>/fixedNavigation', templateShareable: false}">
+						items="{path: 'sideNavigation>/fixedNavigation', templateShareable: false}">
 						<tnt:NavigationListItem
-							text="{side>title}"
-							icon="{side>icon}"
-							key="{side>key}">
+							text="{sideNavigation>title}"
+							icon="{sideNavigation>icon}"
+							key="{sideNavigation>key}">
 						</tnt:NavigationListItem>
 					</tnt:NavigationList>
 				</tnt:fixedItem>

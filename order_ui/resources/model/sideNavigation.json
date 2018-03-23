@@ -7,9 +7,9 @@
 			"key": "Home"
 		},
 		{
-			"title": "Settings",
+			"title": "My preferences",
 			"icon": "sap-icon://settings",
-			"key": "systemSettings"
+			"key": "myPreferences"
 		},
 		{
 			"title": "Statistics",
@@ -41,8 +41,8 @@
 	],
 	"masterSettings": [
 		{
-			"title": "System Settings",
-			"key": "systemSettings",
+			"title": "My preferences",
+			"key": "myPreferences",
 			"selected": true
 		},
 		{

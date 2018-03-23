@@ -15,14 +15,14 @@ sap.ui.define([
 
 		//on initialization
 		initialize: function() {
-			
+
 			//get OData model reference 
 			this.oODataModel = this.getOwnerComponent().getModel("FranchisePortal");
 			this.i18nModel = this.getOwnerComponent().getModel("i18n");
-			
+
 			//get resource bundle related to i18n model
 			this.oResourceBundle = this.getResourceBundle();
-			
+
 			//get message strip reference
 			this.oMessageStrip = this.byId("msMessageStrip");
 			if (this.oMessageStrip) {
@@ -893,8 +893,6 @@ sap.ui.define([
 
 		},
 
-
-
 		//is valid SA ID number
 		isValidSAIDNumber: function(sSAIDNumber) {
 			if (
@@ -1310,10 +1308,19 @@ sap.ui.define([
 		 */
 		sendStripMessage: function(sText, sType) {
 
-			//message handling
-			this.oMessageStrip.setText(sText);
-			this.oMessageStrip.setType(sType);
-			this.oMessageStrip.setVisible(true);
+			//set view message strip as default
+			var oMessageStrip = this.oMessageStrip;
+
+			//determine message strip to render in
+			var oDialogMessageStrip = sap.ui.getCore().byId("msDialogMessageStrip");
+			if (oDialogMessageStrip) {
+				oMessageStrip = oDialogMessageStrip;
+			}
+
+			//set message to message strip
+			oMessageStrip.setText(sText);
+			oMessageStrip.setType(sType);
+			oMessageStrip.setVisible(true);
 
 		},
 
@@ -3240,6 +3247,14 @@ sap.ui.define([
 				this.getOwnerComponent().navigateBack("Home");
 			}
 
+		},
+		
+		//prepare view for next action
+		prepareViewForNextAction: function(){
+			
+			//hide message strip
+			this.oMessageStrip.setVisible(false);
+			
 		}
 
 	});
