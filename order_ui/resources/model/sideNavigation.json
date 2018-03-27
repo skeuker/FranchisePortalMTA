@@ -9,20 +9,20 @@
 		{
 			"title": "My preferences",
 			"icon": "sap-icon://settings",
-			"key": "myPreferences"
+			"key": "Preferences"
 		},
 		{
-			"title": "Statistics",
+			"title": "Events",
 			"icon": "sap-icon://line-chart",
-			"key": "statistics",
+			"key": "EventListing",
 			"items": [
 				{
-					"title": "Usage Statistics",
-					"key": "Usage Statistics was pressed"
+					"title": "Active events",
+					"key": "EventsList"
 				},
 				{
-					"title": "Order Statistics",
-					"key": "Order Statistics was pressed"
+					"title": "Expired events",
+					"key": "EventsList"
 				}
 			]
 		}

@@ -27,6 +27,6 @@
 			"$XSAPPNAME.Display",
 			"$XSAPPNAME.Edit"
 		],
-		"attribute-references": ["DocumentType"]
+		"attribute-references": ["DocumentType", "StoreID"]
 	}]
 }

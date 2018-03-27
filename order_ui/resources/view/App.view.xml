@@ -45,7 +45,7 @@
 				</Button>
 				<Button
 					id="userButton"
-					text="{i18n>userName}"
+					text="{= 'Logged on as ' + ${viewModel>/loggedOnUser} }"
 					type="Transparent"
 					press="onUserNamePress">
 					<layoutData>
@@ -57,7 +57,7 @@
 		<tnt:sideContent>
 			<tnt:SideNavigation
 				expanded="true"
-				itemSelect="onItemSelect">
+				itemSelect="onNavigationItemSelect">
 				<tnt:NavigationList
 					items="{path: 'sideNavigation>/navigation', templateShareable: false}">
 					<tnt:NavigationListItem

@@ -21,8 +21,41 @@ sap.ui.define([
 
 	return BaseController.extend("pnp.co.za.FranchisePortalOrdering.controller.App", {
 
+		//init hook of UI5 controller framework
 		onInit: function() {
+
+			//initialize this controller
+			this.initialize();
+
+			//add style class
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+
+			//get user context	
+			$.ajax({
+
+				//attributes of backend call
+				contentType: "application/json",
+				dataType: "json",
+				processData: false,
+				type: "GET",
+				url: "/node/getUserContext",
+
+				//success handler
+				success: function(oUserContext) {
+
+					//keep track of user context for use in application
+					this.getOwnerComponent().oUserContext = oUserContext;
+
+					//compose name of logged on user
+					var sLoggedOnUser = oUserContext.userInfo.givenName + " " + this.getOwnerComponent().oUserContext.userInfo.familyName;
+
+					//set view model attributes
+					this.oViewModel.setProperty("/loggedOnUser", sLoggedOnUser);
+
+				}.bind(this)
+
+			});
+
 		},
 
 		/**
@@ -30,15 +63,29 @@ sap.ui.define([
 		 * @public
 		 * @param {sap.ui.base.Event} oEvent The item select event
 		 */
-		onItemSelect: function(oEvent) {
+		onNavigationItemSelect: function(oEvent) {
+
+			//get selected navigation item and key thereof
 			var oItem = oEvent.getParameter('item');
 			var sKey = oItem.getKey();
+
+			//depending on selected navigation item key
 			switch (sKey) {
-				case "myPreferences":
+
+				//navigate to route of same name
+				case "Home":
+				case "Preferences":
+				case "EventsList":
 					this.getRouter().navTo(sKey);
 					break;
+
+					//no navigation for parent navigation item
+				case "EventListing":
+					break;
+
+					//unhandled navigation items
 				default:
-					MessageToast.show(sKey);
+					MessageToast.show("Navigation for item key " + sKey + " has not yet been implemented");
 			}
 		},
 

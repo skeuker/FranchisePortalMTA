@@ -133,6 +133,14 @@
 					"target": [
 						"Event"
 					]
+				},
+				{
+					"name": "Preferences",
+					"pattern": "Preferences",
+					"greedy": false,
+					"target": [
+						"Preferences"
+					]
 				}
 			],
 			"targets": {
@@ -161,6 +169,15 @@
 					"viewName": "Event",
 					"title": "Event",
 					"viewId": "Event",
+					"viewPath": "pnp.co.za.FranchisePortalOrdering.view"
+				},
+				"Preferences": {
+					"viewType": "XML",
+					"transition": "slide",
+					"clearAggregation": true,
+					"viewName": "Preferences",
+					"title": "Preferences",
+					"viewId": "Preferences",
 					"viewPath": "pnp.co.za.FranchisePortalOrdering.view"
 				}
 			}

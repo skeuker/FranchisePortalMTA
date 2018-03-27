@@ -33,6 +33,12 @@ sap.ui.define([
 			this.oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
 			this.oMessageManager = sap.ui.getCore().getMessageManager();
 			this.oMessageManager.registerMessageProcessor(this.oMessageProcessor);
+			
+			//set view model for controlling UI attributes
+			this.oViewModel = new sap.ui.model.json.JSONModel({
+				busy: false
+			});
+			this.setModel(this.oViewModel, "viewModel");
 
 		},
 

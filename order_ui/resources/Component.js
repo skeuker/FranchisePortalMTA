@@ -17,21 +17,21 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function() {
-			
+
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
-			
+
 			// create the views based on the url/hash
 			this.getRouter().initialize();
-			
+
 		},
-		
-		getContentDensityClass: function () {
+
+		getContentDensityClass: function() {
 			if (!this._sContentDensityClass) {
-				if (!sap.ui.Device.support.touch){
+				if (!sap.ui.Device.support.touch) {
 					this._sContentDensityClass = "sapUiSizeCompact";
 				} else {
 					this._sContentDensityClass = "sapUiSizeCozy";
@@ -39,6 +39,6 @@ sap.ui.define([
 			}
 			return this._sContentDensityClass;
 		}
-		
+
 	});
 });

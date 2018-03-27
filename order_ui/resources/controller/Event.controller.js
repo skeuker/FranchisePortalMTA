@@ -15,12 +15,6 @@ sap.ui.define([
 			//register controller for view display
 			this.getRouter().getTarget("Event").attachDisplay(this.onDisplay, this);
 
-			//set view model for controlling UI attributes
-			this.oViewModel = new JSONModel({
-				busy: false
-			});
-			this.setModel(this.oViewModel, "viewModel");
-
 		},
 
 		//on display of view
