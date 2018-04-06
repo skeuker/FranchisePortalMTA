@@ -378,10 +378,13 @@ sap.ui.define([
 				}.bind(this),
 
 				//error handler
-				error: function(data) {
-
+				error: function(oResponse) {
+					
 					//set view to no longer busy
 					this.oViewModel.setProperty("/busy", false);
+					
+					//show error dialog
+					this.getOwnerComponent().showErrorDialog(this.getResourceBundle().getText("messageFailedToPostPurchaseOrder"), oResponse.responseText, "Order creation failed");
 
 				}.bind(this)
 			});
