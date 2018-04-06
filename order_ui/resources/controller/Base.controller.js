@@ -19,6 +19,12 @@ sap.ui.define([
 			//get OData model reference 
 			this.oODataModel = this.getOwnerComponent().getModel("FranchisePortal");
 			this.i18nModel = this.getOwnerComponent().getModel("i18n");
+			
+			//attach view to text resources model
+			this.getView().setModel(this.i18nModel, "i18n");
+
+			//attach view to this OData Model
+			this.getView().setModel(this.oODataModel);
 
 			//get resource bundle related to i18n model
 			this.oResourceBundle = this.getResourceBundle();
@@ -39,75 +45,7 @@ sap.ui.define([
 				busy: false
 			});
 			this.setModel(this.oViewModel, "viewModel");
-
-		},
-
-		//set deferred and change groups
-		setDeferredChangeGroups: function() {
-
-			//set deferred groupId for update of ODATA entities 
-			var aDeferredGroups = this.oODataModel.getDeferredGroups();
-			if (aDeferredGroups.indexOf("deferredChanges") < 0) {
-				aDeferredGroups.push("deferredChanges");
-				this.oODataModel.setDeferredGroups(aDeferredGroups);
-			}
-
-			//set group ID for changes made through two way binding
-			this.oODataModel.setChangeGroups({
-				"Service": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"ServiceParameter": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"Supplier": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"Person": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"BEEClassification": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"Organisation": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"BankAccount": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"Address": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"Certificate": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"Contact": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"Responsibility": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"Declaration": {
-					groupId: "deferredChanges",
-					single: false
-				},
-				"Document": {
-					groupId: "deferredChanges",
-					single: false
-				}
-			});
-
+			
 		},
 
 		//prepare message popover for display

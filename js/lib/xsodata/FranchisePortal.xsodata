@@ -25,6 +25,12 @@ service  {
    //document types
    "FranchisePortal.DocumentTypes" as "DocumentTypes" key("documentTypeID"); 
    
+   //application parameters
+   "FranchisePortal.ApplicationParameter" as "ApplicationParameters" key ("parameterID");
+   
+   //application user parameters
+   "FranchisePortal.UserApplicationParameter" as "UserApplicationParameters" key ("userID", "parameterID");
+   
    //association between event and event products
    association "Event_Products" principal "Events"("eventID") multiplicity "1" dependent "EventProducts"("eventID") multiplicity "*";
    

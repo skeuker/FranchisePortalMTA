@@ -1,0 +1,9 @@
+{
+	"applicationParameters": [{
+		"parameterID": "StoreID",
+		"parameterText": "Store ID"
+	}, {
+		"parameterID": "MinOrderValue",
+		"parameterText": "Minimum order value"
+	}]
+}

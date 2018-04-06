@@ -168,7 +168,8 @@ sap.ui.define([
 						productID: oEventProduct.productID,
 						productText: oEventProduct.productText,
 						quantity: iQuantityOrdered
-					}
+					},
+					groupId: "Changes"
 				});
 
 			} else {
@@ -186,7 +187,7 @@ sap.ui.define([
 			this.oODataModel.submitChanges({
 
 				//successfully submitted changes
-				success: (function(oData) {
+				success: function(oData) {
 
 					//refresh binding of shopping cart
 					this.getView().byId("tabEventShoppingCartItemList").getBinding("items").refresh();
@@ -205,7 +206,7 @@ sap.ui.define([
 					//view is no longer busy
 					this.oViewModel.setProperty("/busy", false);
 
-				}).bind(this)
+				}.bind(this)
 
 			});
 
@@ -232,7 +233,7 @@ sap.ui.define([
 			this.oODataModel.submitChanges({
 
 				//successfully submitted changes
-				success: (function() {
+				success: function() {
 
 					//refresh binding of shopping cart
 					this.getView().byId("tabEventShoppingCartItemList").getBinding("items").refresh();
@@ -245,7 +246,7 @@ sap.ui.define([
 					//view is no longer busy
 					this.oViewModel.setProperty("/busy", false);
 
-				}).bind(this)
+				}.bind(this)
 
 			});
 
@@ -263,11 +264,16 @@ sap.ui.define([
 			//set view to busy
 			this.oViewModel.setProperty("/busy", true);
 
-			//delete shopping cart item from backend
+			//register delete request for shopping cart item removal
 			this.oODataModel.remove(oListItemContext.getPath(), {
+				groupId: "Changes"
+			});
+
+			//submit delete to backend
+			this.oODataModel.submitChanges({
 
 				//service entity deleted successfully
-				success: (function() {
+				success: function() {
 
 					//refresh binding of shopping cart
 					this.getView().byId("tabEventShoppingCartItemList").getBinding("items").refresh();
@@ -280,7 +286,7 @@ sap.ui.define([
 					//post processing after successful updating in the backend
 					this.oViewModel.setProperty("/busy", false);
 
-				}).bind(this)
+				}.bind(this)
 
 			});
 

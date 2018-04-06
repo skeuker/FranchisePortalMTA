@@ -13,9 +13,8 @@ context FranchisePortal {
             validityStartDate : LocalDate;
             validitEndDate    : LocalDate;
             thumbNailUrl      : String(120);
-            orderRequests	  : association[1, 0..*] to OrderRequestHeader on orderRequests.eventID = eventID;
-            products          : association[1, 0..*] to EventProduct on products.eventID = eventID;
-            users             : association[1, 0..*] to EventUser    on users.eventID = eventID;
+            orderRequests     : association[1, 0..*] to OrderRequestHeader on orderRequests.eventID = eventID;
+            products          : association[1, 0..*] to EventProduct       on products.eventID = eventID;
     }
     technical configuration {
         column store;
@@ -37,7 +36,7 @@ context FranchisePortal {
     technical configuration {
         column store;
     };
-    
+
     // event shopping cart
     entity EventShoppingCartItem {
         key eventID      : type of Event.eventID;
@@ -55,11 +54,21 @@ context FranchisePortal {
     technical configuration {
         column store;
     };
+    
+    //application parameters
+    entity ApplicationParameter {
+        key parameterID    : String(20);
+            parameterText : String(40);
+    }
+    technical configuration {
+        column store;
+    };
 
-    //user
-    entity User {
-        key userID  : String(40);
-            storeID : type of Store.storeID;
+    //user application parameters
+    entity UserApplicationParameter {
+        key userID         : String(40);
+        key parameterID    : type of ApplicationParameter.parameterID;
+            parameterValue : String(20);
     }
     technical configuration {
         column store;
@@ -73,23 +82,14 @@ context FranchisePortal {
         column store;
     };
 
-    //user attributess
-    entity EventUser {
-        key eventID : type of Event.eventID;
-        key userID  : type of User.userID;
-    }
-    technical configuration {
-        column store;
-    };
-
     //order request header
     entity OrderRequestHeader {
         key orderRequestID    : String(32);
             eventID           : type of Event.eventID;
             storeID           : type of Store.storeID;
-            externalOrderID	  : String(10);
+            externalOrderID   : String(10);
             orderRequestItems : association[1, 1..*] to OrderRequestItem on orderRequestItems.orderRequestID = orderRequestID;
-            event       	  : association[1, 1..1] to Event on event.eventID = eventID;
+            event             : association[1, 1..1] to Event            on event.eventID = eventID;
     }
     technical configuration {
         column store;
@@ -99,8 +99,8 @@ context FranchisePortal {
     entity OrderRequestItem {
         key orderRequestID     : type of OrderRequestHeader.orderRequestID;
         key itemID             : hana.SMALLINT;
-            productID		   : type of EventProduct.productID;
-            quantity		   : Integer;
+            productID          : type of EventProduct.productID;
+            quantity           : Integer;
             orderRequestHeader : association[1, 1..1] to OrderRequestHeader on orderRequestHeader.orderRequestID = orderRequestID;
     }
     technical configuration {
@@ -137,29 +137,27 @@ context FranchisePortal {
     technical configuration {
         column store;
     };
-    
+
     //document types
     view DocumentTypes as
-    	select from DocumentType
-    	{
-    		documentTypeID,
-    		documentTypeText
-    	}
-    	with structured privilege check;
+        select from DocumentType
+        {
+            documentTypeID,
+            documentTypeText
+        }
+        with structured privilege check;
 
     //active events for current date
     view ActiveEvents as
-        select from     Event as a
-        left outer join EventUser as b on
-            a.eventID = b.eventID
+        select from     Event 
         {
-            a.eventID,
-            a.eventText,
-            a.thumbNailUrl
+            eventID,
+            eventText,
+            thumbNailUrl
         }
         where
-                a.validitEndDate    <= current_date
-            and a.validityStartDate >= current_date
+                validitEndDate    <= current_date
+            and validityStartDate >= current_date
         with structured privilege check;
 
     //store order requests
@@ -171,5 +169,4 @@ context FranchisePortal {
             storeID
         }
         with structured privilege check;
-        
 };

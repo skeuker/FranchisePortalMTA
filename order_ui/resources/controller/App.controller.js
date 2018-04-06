@@ -1,22 +1,6 @@
 sap.ui.define([
-	'pnp/co/za/FranchisePortalOrdering/controller/Base.controller',
-	'jquery.sap.global',
-	'sap/ui/core/Fragment',
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel',
-	'sap/m/ResponsivePopover',
-	'sap/m/MessagePopover',
-	'sap/m/ActionSheet',
-	'sap/m/Button',
-	'sap/m/Link',
-	'sap/m/Bar',
-	'sap/ui/layout/VerticalLayout',
-	'sap/m/NotificationListItem',
-	'sap/m/MessagePopoverItem',
-	'sap/ui/core/CustomData',
-	'sap/m/MessageToast'
-], function(BaseController, jQuery, Fragment, Controller, JSONModel, ResponsivePopover, MessagePopover, ActionSheet, Button, Link, Bar,
-	VerticalLayout, NotificationListItem, MessagePopoverItem, CustomData, MessageToast) {
+	'pnp/co/za/FranchisePortalOrdering/controller/Base.controller'
+], function(BaseController) {
 	"use strict";
 
 	return BaseController.extend("pnp.co.za.FranchisePortalOrdering.controller.App", {
@@ -29,6 +13,19 @@ sap.ui.define([
 
 			//add style class
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+
+			//set one change group summarizing all changes
+			this.oODataModel.setChangeGroups({
+				"UserApplicationParametersType": {
+					groupId: "Changes"
+				},
+				"EventShoppingCartItemsType": {
+					groupId: "Changes"
+				}
+			});
+
+			//set change group for all changes to deferred 
+			this.oODataModel.setDeferredGroups(["Changes"]);
 
 			//get user context	
 			$.ajax({
@@ -59,15 +56,78 @@ sap.ui.define([
 		},
 
 		/**
-		 * Convenience method for accessing the router.
+		 * Event handler for select on navigation item
 		 * @public
 		 * @param {sap.ui.base.Event} oEvent The item select event
 		 */
 		onNavigationItemSelect: function(oEvent) {
+			
+			//get selected navigation item 
+			var oNavigationItem = oEvent.getParameter('item');
+			
+			//confirm navigation without save
+			if (this.oODataModel && (this.oODataModel.hasPendingChanges() || this.oODataModel.mDeferredRequests.Changes)) {
+
+				//Confirmation dialog to leave without saving
+				sap.m.MessageBox.confirm(this.getResourceBundle().getText("messageNavigateWithoutSaving"), {
+					styleClass: this.getOwnerComponent().getContentDensityClass(),
+					
+					//actions to be displayed
+					actions: [
+						sap.m.MessageBox.Action.OK,
+						sap.m.MessageBox.Action.CANCEL
+					],
+
+					//on close of confirmation dialog
+					onClose: function(oAction) {
+
+						//user chose to cancel 					
+						if (oAction === sap.m.MessageBox.Action.CANCEL) {
+							return;
+						}
+
+						//user chose to leave without saving
+						if (oAction === sap.m.MessageBox.Action.OK) {
+
+							//reset changes related to 'createEntity' and two-way bound properties
+							this.oODataModel.resetChanges();
+
+							//reset deferred DELETE requests for group 'Changes'
+							if (this.oODataModel.mDeferredRequests.Changes) {
+								delete this.oODataModel.mDeferredRequests.Changes;
+							}
+
+							//do navigate to seleted item
+							this.doNavigateToSelectedItem(oNavigationItem);
+
+							//no further processing here
+							return;
+
+						}
+
+					}.bind(this)
+
+				});
+
+				//no further processing here
+				return;
+				
+			}
+
+			//do navigate to seleted item
+			this.doNavigateToSelectedItem(oNavigationItem);
+
+		},
+
+		/**
+		 * Event handler for select on navigation item
+		 * @public
+		 * @param {sap.ui.base.Event} oEvent The item select event
+		 */
+		doNavigateToSelectedItem: function(oNavigationItem) {
 
 			//get selected navigation item and key thereof
-			var oItem = oEvent.getParameter('item');
-			var sKey = oItem.getKey();
+			var sKey = oNavigationItem.getKey();
 
 			//depending on selected navigation item key
 			switch (sKey) {
@@ -85,8 +145,9 @@ sap.ui.define([
 
 					//unhandled navigation items
 				default:
-					MessageToast.show("Navigation for item key " + sKey + " has not yet been implemented");
+					sap.m.MessageToast.show("Navigation for item key " + sKey + " has not yet been implemented");
 			}
+
 		},
 
 		onUserNamePress: function(oEvent) {
@@ -97,33 +158,33 @@ sap.ui.define([
 				oMessagePopover.destroy();
 			}
 			var fnHandleUserMenuItemPress = function(oEvent) {
-				MessageToast.show(oEvent.getSource().getText() + " was pressed");
+				sap.m.MessageToast.show(oEvent.getSource().getText() + " was pressed");
 			};
-			var oActionSheet = new ActionSheet(this.getView().createId("userMessageActionSheet"), {
+			var oActionSheet = new sap.m.ActionSheet(this.getView().createId("userMessageActionSheet"), {
 				title: oBundle.getText("userHeaderTitle"),
 				showCancelButton: false,
 				buttons: [
-					new Button({
+					new sap.m.Button({
 						text: 'User Settings',
 						type: sap.m.ButtonType.Transparent,
 						press: fnHandleUserMenuItemPress
 					}),
-					new Button({
+					new sap.m.Button({
 						text: "Online Guide",
 						type: sap.m.ButtonType.Transparent,
 						press: fnHandleUserMenuItemPress
 					}),
-					new Button({
+					new sap.m.Button({
 						text: 'Feedback',
 						type: sap.m.ButtonType.Transparent,
 						press: fnHandleUserMenuItemPress
 					}),
-					new Button({
+					new sap.m.Button({
 						text: 'Help',
 						type: sap.m.ButtonType.Transparent,
 						press: fnHandleUserMenuItemPress
 					}),
-					new Button({
+					new sap.m.Button({
 						text: 'Logout',
 						type: sap.m.ButtonType.Transparent,
 						press: fnHandleUserMenuItemPress
@@ -133,6 +194,7 @@ sap.ui.define([
 					oActionSheet.destroy();
 				}
 			});
+			
 			// forward compact/cozy style into dialog
 			jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oActionSheet);
 			oActionSheet.openBy(oEvent.getSource());
@@ -157,7 +219,7 @@ sap.ui.define([
 		// Errors Pressed
 		onMessagePopoverPress: function(oEvent) {
 			if (!this.getView().byId("errorMessagePopover")) {
-				var oMessagePopover = new MessagePopover(this.getView().createId("errorMessagePopover"), {
+				var oMessagePopover = new sap.m.MessagePopover(this.getView().createId("errorMessagePopover"), {
 					placement: sap.m.VerticalPlacementType.Bottom,
 					items: {
 						path: 'alerts>/alerts/errors',
@@ -187,13 +249,13 @@ sap.ui.define([
 			if (oMessagePopover && oMessagePopover.isOpen()) {
 				oMessagePopover.destroy();
 			}
-			var oButton = new Button({
+			var oButton = new sap.m.Button({
 				text: oBundle.getText("notificationButtonText"),
 				press: function() {
-					MessageToast.show("Show all Notifications was pressed");
+					sap.m.MessageToast.show("Show all Notifications was pressed");
 				}
 			});
-			var oNotificationPopover = new ResponsivePopover(this.getView().createId("notificationMessagePopover"), {
+			var oNotificationPopover = new sap.m.ResponsivePopover(this.getView().createId("notificationMessagePopover"), {
 				title: oBundle.getText("notificationTitle"),
 				contentWidth: "300px",
 				endButton: oButton,
@@ -222,7 +284,7 @@ sap.ui.define([
 		 */
 		_createNotification: function(sId, oBindingContext) {
 			var oBindingObject = oBindingContext.getObject();
-			var oNotificationItem = new NotificationListItem({
+			var oNotificationItem = new sap.m.NotificationListItem({
 				title: oBindingObject.title,
 				description: oBindingObject.description,
 				priority: oBindingObject.priority,
@@ -239,7 +301,7 @@ sap.ui.define([
 				authorPicture: oBindingObject.icon,
 				press: function() {},
 				customData: [
-					new CustomData({
+					new sap.m.CustomData({
 						key: "path",
 						value: oBindingContext.getPath()
 					})
@@ -250,13 +312,13 @@ sap.ui.define([
 
 		_createError: function(sId, oBindingContext) {
 			var oBindingObject = oBindingContext.getObject();
-			var oLink = new Link("moreDetailsLink", {
+			var oLink = new sap.m.Link("moreDetailsLink", {
 				text: "More Details",
 				press: function() {
-					MessageToast.show("More Details was pressed");
+					sap.m.MessageToast.show("More Details was pressed");
 				}
 			});
-			var oMessageItem = new MessagePopoverItem({
+			var oMessageItem = new sap.m.MessagePopoverItem({
 				title: oBindingObject.title,
 				subtitle: oBindingObject.subTitle,
 				description: oBindingObject.description,

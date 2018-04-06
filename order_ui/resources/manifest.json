@@ -84,20 +84,17 @@
 					"defaultCountMode": "Inline",
 					"defaultBindingMode": "TwoWay",
 					"defaultOperationMode": "Client",
+					"defaultUpdateMethod": "Put",
 					"sequentializeRequests": true
 				}
 			},
-			"sideNavigation": {
+			"SideNavigationModel": {
 				"type": "sap.ui.model.json.JSONModel",
-				"uri": "model/sideNavigation.json"
+				"uri": "model/SideNavigationModel.json"
 			},
-			"alerts": {
+			"AppModel": {
 				"type": "sap.ui.model.json.JSONModel",
-				"uri": "model/alerts.json"
-			},
-			"customer": {
-				"type": "sap.ui.model.json.JSONModel",
-				"uri": "model/customers.json"
+				"uri": "model/AppModel.json"
 			}
 		},
 		"routing": {
