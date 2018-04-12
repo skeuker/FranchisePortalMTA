@@ -1,19 +1,9 @@
-<mvc:View height="100%"
-	controllerName="pnp.co.za.FranchisePortalOrdering.controller.App"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
-	xmlns:tnt="sap.tnt">
-
-	<tnt:ToolPage
-		id="app"
-		class="sapUiDemoToolPage">
+<mvc:View height="100%" controllerName="pnp.co.za.FranchisePortalOrdering.controller.App" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:tnt="sap.tnt" busy="{viewModel>/busy}">
+	<tnt:ToolPage id="app" class="sapUiDemoToolPage">
 		<tnt:header>
 			<tnt:ToolHeader>
-				<Button
-					id="sideNavigationToggleButton"
-					icon="sap-icon://menu2"
-					type="Transparent"
-					press="onSideNavButtonPress">
+				<Button id="sideNavigationToggleButton" icon="sap-icon://menu2" type="Transparent" press="onSideNavButtonPress">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow"/>
 					</layoutData>
@@ -21,33 +11,19 @@
 				<ToolbarSpacer/>
 				<Title text="{i18n>appTitle}"/>
 				<ToolbarSpacer/>
-				<Button
-					id="errorButton"
-					icon="sap-icon://message-popup"
-					text="{= ${AlertModel>/errors}.length }"
-					visible="{= ${AlertModel>/errors}.length === 0 ? false : true }"
-					type="Transparent"
-					press="onMessagePopoverPress">
+				<Button id="errorButton" icon="sap-icon://message-popup" text="{= ${AlertModel>/errors}.length }"
+					visible="{= ${AlertModel>/errors}.length === 0 ? false : true }" type="Transparent" press="onMessagePopoverPress">
 					<layoutData>
 						<OverflowToolbarLayoutData closeOverflowOnInteraction="false"/>
 					</layoutData>
 				</Button>
-				<Button
-					id="notificationButton"
-					icon="sap-icon://ui-notifications"
-					text="{= ${alerts>/alerts/notifications}.length }"
-					visible="{= ${alerts>/alerts/notifications}.length === 0 ? false : true }"
-					type="Transparent"
-					press="onNotificationPress">
+				<Button id="notificationButton" icon="sap-icon://ui-notifications" text="{= ${alerts>/alerts/notifications}.length }"
+					visible="{= ${alerts>/alerts/notifications}.length === 0 ? false : true }" type="Transparent" press="onNotificationPress">
 					<layoutData>
 						<OverflowToolbarLayoutData closeOverflowOnInteraction="false"/>
 					</layoutData>
 				</Button>
-				<Button
-					id="userButton"
-					text="{= 'Logged on as ' + ${viewModel>/loggedOnUser} }"
-					type="Transparent"
-					press="onUserNamePress">
+				<Button id="userButton" text="{= 'Logged on as ' + ${viewModel>/loggedOnUser} }" type="Transparent" press="onUserNamePress">
 					<layoutData>
 						<OverflowToolbarLayoutData closeOverflowOnInteraction="false"/>
 					</layoutData>
@@ -55,32 +31,16 @@
 			</tnt:ToolHeader>
 		</tnt:header>
 		<tnt:sideContent>
-			<tnt:SideNavigation
-				expanded="true"
-				itemSelect="onNavigationItemSelect">
-				<tnt:NavigationList
-					items="{path: 'SideNavigationModel>/navigation', templateShareable: false}">
-					<tnt:NavigationListItem
-						text="{SideNavigationModel>title}"
-						icon="{SideNavigationModel>icon}"
-						expanded="{SideNavigationModel>/expanded}"
-						items="{path: 'SideNavigationModel>items', templateShareable: false}"
-						key="{SideNavigationModel>key}">
-						<tnt:NavigationListItem
-							text="{SideNavigationModel>title}"
-							key="{SideNavigationModel>key}"
-							enabled="{SideNavigationModel>enabled}">
-						</tnt:NavigationListItem>
+			<tnt:SideNavigation expanded="true" itemSelect="onNavigationItemSelect">
+				<tnt:NavigationList items="{path: 'SideNavigationModel>/navigation', templateShareable: false}">
+					<tnt:NavigationListItem text="{SideNavigationModel>title}" icon="{SideNavigationModel>icon}" expanded="{SideNavigationModel>/expanded}"
+						items="{path: 'SideNavigationModel>items', templateShareable: false}" key="{SideNavigationModel>key}">
+						<tnt:NavigationListItem text="{SideNavigationModel>title}" key="{SideNavigationModel>key}" enabled="{SideNavigationModel>enabled}"></tnt:NavigationListItem>
 					</tnt:NavigationListItem>
 				</tnt:NavigationList>
 				<tnt:fixedItem>
-					<tnt:NavigationList
-						items="{path: 'SideNavigationModel>/fixedNavigation', templateShareable: false}">
-						<tnt:NavigationListItem
-							text="{SideNavigationModel>title}"
-							icon="{SideNavigationModel>icon}"
-							key="{SideNavigationModel>key}">
-						</tnt:NavigationListItem>
+					<tnt:NavigationList items="{path: 'SideNavigationModel>/fixedNavigation', templateShareable: false}">
+						<tnt:NavigationListItem text="{SideNavigationModel>title}" icon="{SideNavigationModel>icon}" key="{SideNavigationModel>key}"></tnt:NavigationListItem>
 					</tnt:NavigationList>
 				</tnt:fixedItem>
 			</tnt:SideNavigation>
@@ -89,5 +49,4 @@
 			<App id="mainContents"/>
 		</tnt:mainContents>
 	</tnt:ToolPage>
-
 </mvc:View>

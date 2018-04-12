@@ -344,21 +344,30 @@ sap.ui.define([
 
 		//retry to load metadata
 		retryMetadataLoad: function(oEvent) {
+			
+			//set view to busy
+			this.oViewModel.setProperty("/busy", true);
 
 			//refresh OData model bindings
 			var oMetadataLoadPromise = this.getOwnerComponent().getModel("FranchisePortal").refreshMetadata();
 
 			//await metadata loading
 			oMetadataLoadPromise.then(function() {
+				
+				//set view to no longer busy
+				this.oViewModel.setProperty("/busy", false);
 
-				//create notification
+				//close message popover and create notification
 				//todo
 
-			}, function() {
+			}.bind(this), function() {
 				
-				//no further processing
+				//set view to no longer busy
+				this.oViewModel.setProperty("/busy", false);
 				
-			});
+				//no further processing: attached metadata load failure event handler is invoked
+				
+			}.bind(this));
 
 		}
 
