@@ -180,14 +180,7 @@
 			}
 		},
 		"resources": {
-			"css": [
-				{
-					"uri": "css/style.css"
-				},
-				{
-					"uri": "css/quill.css"
-				}
-			]
+			"css": [ ]
 		}
 	},
 	"sap.platform.hcp": {
