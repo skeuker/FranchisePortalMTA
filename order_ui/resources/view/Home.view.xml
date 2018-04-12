@@ -8,11 +8,18 @@
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell class="sapUiResponsiveContentPadding" title="{i18n>blockAppTitle}" backgroundColorSet="ColorSet9"
+				<l:BlockLayoutCell title="{i18n>blockAppTitle}" backgroundColorSet="ColorSet9"
 					backgroundColorShade="ShadeA" titleAlignment="Left"/>
+				<l:BlockLayoutCell backgroundColorSet="ColorSet9" backgroundColorShade="ShadeA">
+					<l:VerticalLayout>
+						<core:Icon src="sap-icon://key-user-settings" size="2.5rem" color="Default"/>
+						<Title text="{i18n>blockPreferencesTitle}" titleStyle="H2" class="sapUiTinyMarginTopBottom"/>
+						<Link text="{i18n>blockPreferencesAccessLink}" press="onPressPreferencesLink"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell backgroundColorSet="ColorSet5" backgroundColorShade="ShadeA">
+				<l:BlockLayoutCell backgroundColorSet="ColorSet11" backgroundColorShade="ShadeA">
 					<l:VerticalLayout>
 						<core:Icon src="sap-icon://sales-order" size="2.5rem" color="Default"/>
 						<Title text="{i18n>blockEventsTitle}" titleStyle="H2" class="sapUiTinyMarginTopBottom"/>

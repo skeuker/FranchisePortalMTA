@@ -15,15 +15,15 @@
 	function insertOrderRequestHeader(callback) {
 
 		//construct sql for order request header insert
-		var sSqlHeaderInsert = sqlstring.format('insert into "FranchisePortal.OrderRequestHeader" values(?,?,?,?)', [req.body.header.orderRequestID,
-			req.body.header.eventID, req.body.header.storeID, req.body.header.externalOrderID
+		var sSqlHeaderInsert = sqlstring.format('insert into "FranchisePortal.OrderRequestHeader" values(?,?,?,?,?)', [req.body.header.orderRequestID,
+			req.body.header.eventID, req.body.header.storeID, req.body.header.externalOrderID, req.body.header.currencyCode
 		]);
 
 		//execute sql statement for order request header insert and handle callback
 		req.db.exec(sSqlHeaderInsert, function(oSqlError, rows) {
 
 			//continue waterfall
-			callback(oSqlError);
+			return callback(oSqlError);
 
 		});
 
@@ -33,11 +33,11 @@
 	function insertOrderRequestItems(callback) {
 
 		//prepare statement for order request item insert
-		req.db.prepare('insert into "FranchisePortal.OrderRequestItem" values (?,?,?,?)', function(oSqlError, oStatement) {
+		req.db.prepare('insert into "FranchisePortal.OrderRequestItem" values (?,?,?,?,?)', function(oSqlError, oStatement) {
 
 			//exception handling: sql error
 			if (oSqlError) {
-				callback(oSqlError);
+				return callback(oSqlError);
 			}
 
 			//prepare order request item attribute value arrays
@@ -49,6 +49,7 @@
 				aItemRow.push(oItem.itemID);
 				aItemRow.push(oItem.productID);
 				aItemRow.push(oItem.quantity);
+				aItemRow.push(oItem.netPrice);
 				aItemRows.push(aItemRow);
 			});
 
@@ -56,7 +57,7 @@
 			oStatement.exec(aItemRows, function(oSqlError, rows) {
 
 				//continue waterfall
-				callback(oSqlError);
+				return callback(oSqlError);
 
 			});
 
@@ -71,7 +72,7 @@
 		var sOrderNumber = "4500000123";
 
 		//construct basic authentication header
-		var sCredentials = "c024" + ':' + "Morenic>012";
+		var sCredentials = "c024" + ':' + "Morenic>4";
 		var sb64Credentials = new Buffer(sCredentials).toString('base64');
 		var sAuthenticationToken = "Basic " + sb64Credentials;
 
@@ -94,7 +95,7 @@
 
 				//request exception handling
 				if (err) {
-					callback(err);
+					return callback(err);
 				}
 
 				//get order request information
@@ -104,24 +105,26 @@
 				var oPOCreateInput = {
 					CompanyCode: "1000",
 					PurchaseDocType: "NB",
-					VendorID: "MA05",
+					VendorID: "MA05",  //todo: source determination in backend
 					PurchaseOrganisationID: "1010",
 					PurchaseGroup: "101",
 					toPurchaseOrderItems: []
 				};
 
 				//add purchase order items to PO create input
-				var PurchaseOrderItemID = 1;
+				var iPurchaseOrderItemID = 1;
+				var pPurchaseOrderItemNetValue;
 				oOrderRequest.items.forEach(function(oOrderRequestItem) {
+					pPurchaseOrderItemNetValue = oOrderRequestItem.netPrice * oOrderRequestItem.quantity;
 					oPOCreateInput.toPurchaseOrderItems.push({
 						PurchaseOrderItemID: oOrderRequestItem.itemID.toString(),
 						MaterialID: oOrderRequestItem.productID,
-						PlantID: "WC21",
+						PlantID: oOrderRequestItem.storeID,
 						Quantity: oOrderRequestItem.quantity,
-						UnitOfMeasure: "EA",
-						NetValue: "14.50"
+						NetValue: pPurchaseOrderItemNetValue.toString(),
+						UnitOfMeasure: "EA"
 					});
-					PurchaseOrderItemID++;
+					iPurchaseOrderItemID++;
 				});
 
 				//create purchase order in gateway backend
@@ -146,14 +149,20 @@
 
 						//request exception handling
 						if (err) {
-							callback(err);
+							return callback(err);
 						}
 
 						//get purchase order number
 						var oPOCreateOutput = JSON.parse(responseBody);
 
 						//extract order number from response body
-						sOrderNumber = oPOCreateOutput.d.PurchaseOrderID;
+						if (oPOCreateOutput.d) {
+							sOrderNumber = oPOCreateOutput.d.PurchaseOrderID;
+							
+						//error handling: a purchase order could not be created
+						} else {
+							return callback(oPOCreateOutput.error);
+						}
 
 						//continue waterfall
 						callback(null, sOrderNumber);
@@ -176,7 +185,7 @@
 		req.db.exec(sSqlOrderRequestHeaderUpdate, function(oSqlError, rows) {
 
 			//continue waterfall promoting order number on
-			callback(oSqlError, sOrderNumber);
+			return callback(oSqlError, sOrderNumber);
 
 		});
 
@@ -193,7 +202,7 @@
 		req.db.exec(sSqlShoppingCartDelete, function(oSqlError, rows) {
 
 			//continue waterfall promoting order number
-			callback(oSqlError, sOrderNumber);
+			return callback(oSqlError, sOrderNumber);
 
 		});
 

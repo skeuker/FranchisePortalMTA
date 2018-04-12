@@ -19,7 +19,7 @@
 				</sap.ui.layout.form:FormElement>
 				<sap.ui.layout.form:FormElement id="felemErrorMessageDetails" visible="false">
 					<sap.ui.layout.form:fields>
-						<TextArea id="tareaErrorDetails" value="{Error>/messageDetails}" growing="true" width="385px" height="125px" editable="false"/>
+						<TextArea id="tareaErrorDetails" value="{Error>/messageDetails}" growing="true" growingMaxLines="5" width="385px" wrapping="Soft" editable="false"/>
 					</sap.ui.layout.form:fields>
 				</sap.ui.layout.form:FormElement>
 			</sap.ui.layout.form:FormContainer>

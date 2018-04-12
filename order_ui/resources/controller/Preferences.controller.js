@@ -33,6 +33,9 @@ sap.ui.define([
 			
 			//prepare view for rendering
 			this.oViewModel.setProperty("/busy", false);
+			
+			//set message strip invisible
+			this.oMessageStrip.setVisible(false);
 
 			//set store from preferences
 			this.getView().byId("inputRoleAttributeStoreID").setValue(this.getOwnerComponent().oUserContext.roleAttributes.StoreID.toString());

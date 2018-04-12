@@ -20,6 +20,12 @@ sap.ui.define([
 			//access events list
 			onPressEventsLink: function(){
 				this.getRouter().navTo("EventsList");
+			},
+			
+			//access preferences list
+			onPressPreferencesLink: function(){
+				this.getRouter().navTo("Preferences");
 			}
+			
 		});
 });

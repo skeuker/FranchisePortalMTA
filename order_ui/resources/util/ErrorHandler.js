@@ -26,10 +26,15 @@ sap.ui.define([
 			this.bMessageOpen = false;
 			this.sErrorText = this.oResourceBundle.getText("messageServiceErrorHasOccured");
 
-			//failed to get metadata
+			//attach to MetaDataFailed event of FranchisePortal OData model
 			this.oModel.attachMetadataFailed(function(oEvent) {
+				
+				//get response content
 				var oParams = oEvent.getParameters();
+				
+				//show metadata error dialog
 				this.showMetadataError(oParams.response.message);
+				
 			}, this);
 
 			//attach to request failure event
@@ -76,7 +81,7 @@ sap.ui.define([
 			}
 
 			//show error dialog				
-			this._oComponent.showErrorDialog(sMessage, sMessageDetails, "Backend or connection error occured");
+			this.oComponent.showErrorDialog(sMessage, sMessageDetails, "Backend or connection error occured");
 
 		},
 

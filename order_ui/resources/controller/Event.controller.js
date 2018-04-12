@@ -62,7 +62,7 @@ sap.ui.define([
 			var oProductCatalogListItem = oEvent.getSource().getParent();
 
 			//get quantity ordered
-			var iQuantityOrdered = Number(oProductCatalogListItem.getCells()[3].getValue());
+			var iQuantityOrdered = Number(oProductCatalogListItem.getCells()[4].getValue());
 
 			//message handling: no quantity specified
 			if (!iQuantityOrdered > 0) {
@@ -167,6 +167,7 @@ sap.ui.define([
 						eventID: oEventProduct.eventID,
 						productID: oEventProduct.productID,
 						productText: oEventProduct.productText,
+						dealPrice: oEventProduct.dealPrice,
 						quantity: iQuantityOrdered
 					},
 					groupId: "Changes"
@@ -194,15 +195,16 @@ sap.ui.define([
 
 					//reset order quantity attribute where ordering from product catalog listing
 					if (oListItemSource.type === "Catalog") {
-						oListItemSource.reference.getCells()[3].setValue(null);
+						oListItemSource.reference.getCells()[4].setValue(null);
 					}
 
-					//message handling: successfully added/update item in shopping cart
+					//message handling: successfully added/updated item in shopping cart
 					if (!oExistingShoppingCartListItem) {
 						this.sendStripMessage(this.oResourceBundle.getText("messageShoppingCartItemAddedSuccessfully"), sap.ui.core.MessageType.Success);
 					} else {
 						this.sendStripMessage(this.oResourceBundle.getText("messageShoppingCartItemUpdatedSuccessfully"), sap.ui.core.MessageType.Success);
 					}
+					
 					//view is no longer busy
 					this.oViewModel.setProperty("/busy", false);
 
@@ -323,13 +325,17 @@ sap.ui.define([
 
 			//determine a new order request ID
 			var sOrderRequestID = this.getUUID();
+			
+			//get store ID for which order is to be placed
+			var sStoreID = this.getOwnerComponent().oUserContext.roleAttributes.StoreID.toString();
 
 			//prepare order request header
 			var oOrderRequestHeader = {
 				orderRequestID: sOrderRequestID,
-				externalOrderID: "4500034251",
+				currencyCode: "ZAR",
+				externalOrderID: "ExtRef",
 				eventID: oEvent.eventID,
-				storeID: "WF05"
+				storeID: sStoreID
 			};
 
 			//prepare array of order request items
@@ -338,8 +344,10 @@ sap.ui.define([
 				aOrderRequestItems.push({
 					orderRequestID: sOrderRequestID,
 					itemID: ++iItemID,
+					storeID: sStoreID,
 					productID: oShoppingCartItem.productID,
-					quantity: oShoppingCartItem.quantity
+					quantity: oShoppingCartItem.quantity,
+					netPrice: oShoppingCartItem.dealPrice
 				});
 			});
 

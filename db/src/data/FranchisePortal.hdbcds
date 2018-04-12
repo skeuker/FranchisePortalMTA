@@ -54,10 +54,10 @@ context FranchisePortal {
     technical configuration {
         column store;
     };
-    
+
     //application parameters
     entity ApplicationParameter {
-        key parameterID    : String(20);
+        key parameterID   : String(20);
             parameterText : String(40);
     }
     technical configuration {
@@ -88,6 +88,7 @@ context FranchisePortal {
             eventID           : type of Event.eventID;
             storeID           : type of Store.storeID;
             externalOrderID   : String(10);
+            currencyCode      : String(3);
             orderRequestItems : association[1, 1..*] to OrderRequestItem on orderRequestItems.orderRequestID = orderRequestID;
             event             : association[1, 1..1] to Event            on event.eventID = eventID;
     }
@@ -100,6 +101,7 @@ context FranchisePortal {
         key orderRequestID     : type of OrderRequestHeader.orderRequestID;
         key itemID             : hana.SMALLINT;
             productID          : type of EventProduct.productID;
+            netPrice           : Decimal(10, 2);
             quantity           : Integer;
             orderRequestHeader : association[1, 1..1] to OrderRequestHeader on orderRequestHeader.orderRequestID = orderRequestID;
     }
@@ -149,7 +151,7 @@ context FranchisePortal {
 
     //active events for current date
     view ActiveEvents as
-        select from     Event 
+        select from Event
         {
             eventID,
             eventText,

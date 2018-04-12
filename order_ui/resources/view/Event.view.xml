@@ -37,6 +37,7 @@
 											<m:Image src="{= ${FranchisePortal>thumbNailUrl} }" width="5em" densityAware="false"/>
 											<m:Text maxLines="1" text="{FranchisePortal>productID}"/>
 											<m:Link text="{FranchisePortal>productText}" press="onPressProductCatalogItemProductLink"/>
+											<m:Text text="{FranchisePortal>dealPrice}"/>
 											<m:Input type="Number" width="80px"/>
 											<m:Button text="Add to cart" type="Emphasized" press="onPressAddEventProductToShoppingCart"/>
 										</m:cells>
@@ -53,9 +54,14 @@
 											<m:Label text="{i18n>labelProductIDColumn}"/>
 										</m:header>
 									</m:Column>
-									<m:Column width="40%">
+									<m:Column width="35%">
 										<m:header>
 											<m:Label text="{i18n>labelProductTextColumn}"/>
+										</m:header>
+									</m:Column>
+									<m:Column>
+										<m:header>
+											<m:Label text="{i18n>labelProductDealPriceColumn}"/>
 										</m:header>
 									</m:Column>
 									<m:Column>
@@ -93,6 +99,7 @@
 										<m:cells>
 											<m:Text maxLines="1" text="{FranchisePortal>productID}"/>
 											<m:Link text="{FranchisePortal>productText}" press="onPressShoppingCartItemProductLink"/>
+											<m:Text text="{FranchisePortal>dealPrice}"/>
 											<m:Input type="Number" value="{FranchisePortal>quantity}"/>
 											<m:Button text="Delete" type="Emphasized" press="onPressDeleteEventProductFromShoppingCart"/>
 										</m:cells>
@@ -104,9 +111,14 @@
 											<m:Label text="{i18n>labelProductIDColumn}"/>
 										</m:header>
 									</m:Column>
-									<m:Column>
+									<m:Column width="35%">
 										<m:header>
 											<m:Label text="{i18n>labelProductTextColumn}"/>
+										</m:header>
+									</m:Column>
+									<m:Column>
+										<m:header>
+											<m:Label text="{i18n>labelProductDealPriceColumn}"/>
 										</m:header>
 									</m:Column>
 									<m:Column>
