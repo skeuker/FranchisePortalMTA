@@ -28,13 +28,13 @@ sap.ui.define([
 
 			//attach to MetaDataFailed event of FranchisePortal OData model
 			this.oModel.attachMetadataFailed(function(oEvent) {
-				
+
 				//get response content
 				var oParams = oEvent.getParameters();
-				
+
 				//show metadata error dialog
 				this.showMetadataError(oParams.response.message);
-				
+
 			}, this);
 
 			//attach to request failure event
@@ -80,6 +80,29 @@ sap.ui.define([
 				sMessageDetails = this.oComponent.getModel("i18n").getResourceBundle().getText("messageMetaDataErrorOccured");
 			}
 
+			//get reference to the alert model
+			var oAlertModel = this.oComponent.getModel("AlertModel");
+			if (!oAlertModel) {
+				oAlertModel = new JSONModel({
+					errors: []
+				});
+				this.oComponent.setModel(oAlertModel, "AlertModel");
+			}
+
+			//get current alert model content
+			var oAlerts = JSON.parse(oAlertModel.getJSON());
+
+			//push new error into alert model
+			oAlerts.errors.push({
+				"title": "Backend error",
+				"subtitle": "Metadata load failed",
+				"description": "Unable to read metadata of the Franchise Portal OData model. Refresh this page to try rectify. Contact support if the problem persists",
+				"counter": 1
+			});
+
+			//set new alert model content to alert model
+			oAlertModel.setData(oAlerts);
+
 			//show error dialog				
 			this.oComponent.showErrorDialog(sMessage, sMessageDetails, "Backend or connection error occured");
 
@@ -104,17 +127,17 @@ sap.ui.define([
 				var oResponseText = JSON.parse(oResponse.responseText);
 				sMessageDetails = oResponseText.error.message.value;
 			} catch (exception) {
-				
+
 				//no network connection
 				if (oResponse.statusCode === 0) {
 					sMessageDetails = "Your browser is currently unable to connect to City of Cape Town. Check your network connection";
 				}
-				
+
 				//a server error occured
 				if (oResponse.statusCode === 500) {
 					sMessageDetails = "An unexpected backend error occured";
 				}
-				
+
 				//default where message details could not be derived
 				if (sMessageDetails === "") {
 					sMessageDetails = "An unexpected connection or backend error occured";

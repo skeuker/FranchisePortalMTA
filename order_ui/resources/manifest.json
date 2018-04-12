@@ -95,6 +95,10 @@
 			"AppModel": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "model/AppModel.json"
+			},
+			"AlertModel": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/AlertModel.json"
 			}
 		},
 		"routing": {

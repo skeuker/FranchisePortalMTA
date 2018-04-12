@@ -61,17 +61,17 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent The item select event
 		 */
 		onNavigationItemSelect: function(oEvent) {
-			
+
 			//get selected navigation item 
 			var oNavigationItem = oEvent.getParameter('item');
-			
+
 			//confirm navigation without save
 			if (this.oODataModel && (this.oODataModel.hasPendingChanges() || this.oODataModel.mDeferredRequests.Changes)) {
 
 				//Confirmation dialog to leave without saving
 				sap.m.MessageBox.confirm(this.getResourceBundle().getText("messageNavigateWithoutSaving"), {
 					styleClass: this.getOwnerComponent().getContentDensityClass(),
-					
+
 					//actions to be displayed
 					actions: [
 						sap.m.MessageBox.Action.OK,
@@ -111,7 +111,7 @@ sap.ui.define([
 
 				//no further processing here
 				return;
-				
+
 			}
 
 			//do navigate to seleted item
@@ -194,7 +194,7 @@ sap.ui.define([
 					oActionSheet.destroy();
 				}
 			});
-			
+
 			// forward compact/cozy style into dialog
 			jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oActionSheet);
 			oActionSheet.openBy(oEvent.getSource());
@@ -218,23 +218,27 @@ sap.ui.define([
 
 		// Errors Pressed
 		onMessagePopoverPress: function(oEvent) {
-			if (!this.getView().byId("errorMessagePopover")) {
-				var oMessagePopover = new sap.m.MessagePopover(this.getView().createId("errorMessagePopover"), {
-					placement: sap.m.VerticalPlacementType.Bottom,
-					items: {
-						path: 'alerts>/alerts/errors',
-						factory: this._createError
-					},
-					afterClose: function() {
-						oMessagePopover.destroy();
-					}
-				});
-				this.getView().byId("app").addDependent(oMessagePopover);
-				// forward compact/cozy style into dialog
-				jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(),
-					oMessagePopover);
-				oMessagePopover.openBy(oEvent.getSource());
-			}
+
+			//construct message popover containing all alerts
+			var oMessagePopover = new sap.m.MessagePopover({
+				placement: sap.m.VerticalPlacementType.Bottom,
+				items: {
+					path: 'AlertModel>/errors',
+					factory: this.createErrorMessagePopoverItem.bind(this)
+				},
+				afterClose: function() {
+					oMessagePopover.destroy();
+				}
+			});
+
+			//forward compact/cozy style into dialog
+			jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(),
+				oMessagePopover);
+
+			//open message popover
+			this.getView().addDependent(oMessagePopover);
+			oMessagePopover.openBy(oEvent.getSource());
+
 		},
 
 		/**
@@ -310,22 +314,52 @@ sap.ui.define([
 			return oNotificationItem;
 		},
 
-		_createError: function(sId, oBindingContext) {
-			var oBindingObject = oBindingContext.getObject();
-			var oLink = new sap.m.Link("moreDetailsLink", {
-				text: "More Details",
-				press: function() {
-					sap.m.MessageToast.show("More Details was pressed");
-				}
-			});
+		//create message popover item for display
+		createErrorMessagePopoverItem: function(sId, oBindingContext) {
+
+			//get access to alert instance
+			var oAlert = oBindingContext.getObject();
+
+			//construct link to load metadata where applicable
+			if (oAlert.subtitle === "Metadata load failed") {
+				var oLoadMetadataLink = new sap.m.Link({
+					press: this.retryMetadataLoad.bind(this),
+					text: "Reload"
+				});
+			}
+
+			//construct message item
 			var oMessageItem = new sap.m.MessagePopoverItem({
-				title: oBindingObject.title,
-				subtitle: oBindingObject.subTitle,
-				description: oBindingObject.description,
-				counter: oBindingObject.counter,
-				link: oLink
+				title: oAlert.title,
+				subtitle: oAlert.subTitle,
+				description: oAlert.description,
+				counter: oAlert.counter,
+				link: oLoadMetadataLink
 			});
+
+			//feedback to caller
 			return oMessageItem;
+
+		},
+
+		//retry to load metadata
+		retryMetadataLoad: function(oEvent) {
+
+			//refresh OData model bindings
+			var oMetadataLoadPromise = this.getOwnerComponent().getModel("FranchisePortal").refreshMetadata();
+
+			//await metadata loading
+			oMetadataLoadPromise.then(function() {
+
+				//create notification
+				//todo
+
+			}, function() {
+				
+				//no further processing
+				
+			});
+
 		}
 
 	});

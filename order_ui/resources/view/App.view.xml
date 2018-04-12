@@ -24,8 +24,8 @@
 				<Button
 					id="errorButton"
 					icon="sap-icon://message-popup"
-					text="{= ${alerts>/alerts/errors}.length }"
-					visible="{= ${alerts>/alerts/errors}.length === 0 ? false : true }"
+					text="{= ${AlertModel>/errors}.length }"
+					visible="{= ${AlertModel>/errors}.length === 0 ? false : true }"
 					type="Transparent"
 					press="onMessagePopoverPress">
 					<layoutData>
