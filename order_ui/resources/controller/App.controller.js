@@ -150,13 +150,16 @@ sap.ui.define([
 
 		},
 
+		//on user name press event handler
 		onUserNamePress: function(oEvent) {
+
 			var oBundle = this.getModel("i18n").getResourceBundle();
-			// close message popover
-			var oMessagePopover = this.getView().byId("errorMessagePopover");
-			if (oMessagePopover && oMessagePopover.isOpen()) {
-				oMessagePopover.destroy();
+
+			// close message popover where applicable
+			if (this.oMessagePopover && this.oMessagePopover.isOpen()) {
+				this.oMessagePopover.close();
 			}
+
 			var fnHandleUserMenuItemPress = function(oEvent) {
 				sap.m.MessageToast.show(oEvent.getSource().getText() + " was pressed");
 			};
@@ -220,24 +223,24 @@ sap.ui.define([
 		onMessagePopoverPress: function(oEvent) {
 
 			//construct message popover containing all alerts
-			var oMessagePopover = new sap.m.MessagePopover({
+			this.oMessagePopover = new sap.m.MessagePopover({
 				placement: sap.m.VerticalPlacementType.Bottom,
 				items: {
 					path: 'AlertModel>/errors',
 					factory: this.createErrorMessagePopoverItem.bind(this)
 				},
 				afterClose: function() {
-					oMessagePopover.destroy();
+					this.oMessagePopover.destroy();
 				}
 			});
 
 			//forward compact/cozy style into dialog
 			jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(),
-				oMessagePopover);
+				this.oMessagePopover);
 
 			//open message popover
-			this.getView().addDependent(oMessagePopover);
-			oMessagePopover.openBy(oEvent.getSource());
+			this.getView().addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(oEvent.getSource());
 
 		},
 
@@ -248,10 +251,10 @@ sap.ui.define([
 		 */
 		onNotificationPress: function(oEvent) {
 			var oBundle = this.getModel("i18n").getResourceBundle();
-			// close message popover
-			var oMessagePopover = this.getView().byId("errorMessagePopover");
-			if (oMessagePopover && oMessagePopover.isOpen()) {
-				oMessagePopover.destroy();
+
+			// close message popover where applicable
+			if (this.oMessagePopover && this.oMessagePopover.isOpen()) {
+				this.oMessagePopover.close();
 			}
 			var oButton = new sap.m.Button({
 				text: oBundle.getText("notificationButtonText"),
@@ -344,7 +347,7 @@ sap.ui.define([
 
 		//retry to load metadata
 		retryMetadataLoad: function(oEvent) {
-			
+
 			//set view to busy
 			this.oViewModel.setProperty("/busy", true);
 
@@ -353,20 +356,38 @@ sap.ui.define([
 
 			//await metadata loading
 			oMetadataLoadPromise.then(function() {
+
+				//get data of alert model
+				var oAlerts = JSON.parse(this.getOwnerComponent().getModel("AlertModel").getJSON());
+
+				//remove metadata load error from alerts
+				var aAlerts = oAlerts.errors.filter(function(oAlert) {
+					if (oAlert.subtitle === "Metadata load failed") {
+						return false;
+					}
+					return true;
+				});
+				oAlerts.errors = aAlerts;
+				
+				//set error alerts to JSON model instance
+				this.getOwnerComponent().getModel("AlertModel").setData(oAlerts);
+
+				//close message popover
+				this.oMessagePopover.close();
 				
 				//set view to no longer busy
 				this.oViewModel.setProperty("/busy", false);
-
-				//close message popover and create notification
-				//todo
 
 			}.bind(this), function() {
 				
+				//close message popover
+				this.oMessagePopover.close();
+
 				//set view to no longer busy
 				this.oViewModel.setProperty("/busy", false);
-				
+
 				//no further processing: attached metadata load failure event handler is invoked
-				
+
 			}.bind(this));
 
 		}
