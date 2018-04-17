@@ -15,7 +15,7 @@
 								<Label required="true" text="{i18n>labelStoreID}" width="100%"/>
 							</sap.ui.layout.form:label>
 							<sap.ui.layout.form:fields>
-								<Input id="inputRoleAttributeStoreID" width="50%" maxLength="20" enabled="false"/>
+								<Input id="inputRoleAttributeStoreID" width="50%" enabled="false"/>
 							</sap.ui.layout.form:fields>
 						</sap.ui.layout.form:FormElement>
 					</sap.ui.layout.form:formElements>

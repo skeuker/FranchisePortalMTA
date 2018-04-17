@@ -18,8 +18,9 @@
 		<f:header>
 			<f:DynamicPageHeader>
 				<f:content>
-					<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Events" persistencyKey="fiori.test.application2.view.S4.FilterBar" enableBasicSearch="false"
-						smartVariant="smartVariantManageEventList" considerSelectionVariants="true" useToolbar="false" assignedFiltersChanged="onAssignedFiltersChanged">
+					<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Events" persistencyKey="fiori.test.application2.view.S4.FilterBar"
+						enableBasicSearch="false" smartVariant="smartVariantManageEventList" considerSelectionVariants="true" useToolbar="false"
+						assignedFiltersChanged="onAssignedFiltersChanged">
 						<!-- layout data used to make the table growing but the filter bar fixed -->
 						<smartFilterBar:layoutData>
 							<FlexItemData shrinkFactor="0"/>
@@ -30,7 +31,7 @@
 		</f:header>
 		<f:content>
 			<smartTable:SmartTable id="eventsSmartTable" entitySet="Events" enableAutoBinding="true" smartFilterId="smartFilterBar"
-				tableType="ResponsiveTable" useExportToExcel="true" useVariantManagement="false" beforeExport="onBeforeExportEventsList"
+				tableType="ResponsiveTable" useExportToExcel="true" useVariantManagement="true" beforeExport="onBeforeExportEventsList"
 				useTablePersonalisation="true" showTablePersonalisation="true" showRowCount="true" header="Events" height="100%"
 				persistencyKey="SmartTableAnalytical_Explored" showFullScreenButton="true" class="sapUiResponsiveContentPadding">
 				<smartTable:customToolbar>

@@ -17,9 +17,31 @@ module.exports = function() {
 
 		//local data declaration
 		var oRoleAttributes = {};
+		oRoleAttributes.StoreID = [];
 
 		//get StoreID user attribute from roles
-		oRoleAttributes.StoreID = req.authInfo.getAttribute("StoreID");
+		var aRoleAttributeStores = req.authInfo.getAttribute("StoreID");
+		aRoleAttributeStores.forEach(function(oRoleAttributeStore) {
+
+			//split StoreID attribute value as it might contain several stores
+			var aRoleAttributeStoreSplit = oRoleAttributeStore.split(",");
+
+			//for each store in the StoreID authorization attribute value
+			aRoleAttributeStoreSplit.forEach(function(oRoleAttributeStoreSplit) {
+				
+				//remove whitespace from array of store IDs from authorization attribute
+				var sStoreID = oRoleAttributeStoreSplit.trim();
+				
+				//keep track of unique stores in Store ID role attribute array
+				if (!oRoleAttributes.StoreID.find(function(sArrayStoreID) {
+						return sArrayStoreID === sStoreID;
+					})) {
+					oRoleAttributes.StoreID.push(sStoreID);
+				}
+				
+			});
+
+		});
 
 		//construct sql statement to get user's application parameter values
 		var sSql = sqlstring.format(

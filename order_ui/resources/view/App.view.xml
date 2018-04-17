@@ -8,6 +8,7 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow"/>
 					</layoutData>
 				</Button>
+				<Image src="/images/pnplogo.png"/>
 				<ToolbarSpacer/>
 				<Title text="{i18n>appTitle}"/>
 				<ToolbarSpacer/>
@@ -17,8 +18,8 @@
 						<OverflowToolbarLayoutData closeOverflowOnInteraction="false"/>
 					</layoutData>
 				</Button>
-				<Button id="notificationButton" icon="sap-icon://ui-notifications" text="{= ${alerts>/alerts/notifications}.length }"
-					visible="{= ${alerts>/alerts/notifications}.length === 0 ? false : true }" type="Transparent" press="onNotificationPress">
+				<Button id="notificationButton" icon="sap-icon://ui-notifications" text="{= ${AlertModel>/notifications}.length }"
+					visible="{= ${AlertModel>/notifications}.length === 0 ? false : true }" type="Transparent" press="onNotificationPress">
 					<layoutData>
 						<OverflowToolbarLayoutData closeOverflowOnInteraction="false"/>
 					</layoutData>

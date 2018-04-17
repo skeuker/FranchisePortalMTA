@@ -12,7 +12,7 @@
 					backgroundColorShade="ShadeA" titleAlignment="Left"/>
 				<l:BlockLayoutCell backgroundColorSet="ColorSet9" backgroundColorShade="ShadeA">
 					<l:VerticalLayout>
-						<core:Icon src="sap-icon://key-user-settings" size="2.5rem" color="Default"/>
+						<core:Icon src="sap-icon://user-settings" size="2.5rem" color="Default"/>
 						<Title text="{i18n>blockPreferencesTitle}" titleStyle="H2" class="sapUiTinyMarginTopBottom"/>
 						<Link text="{i18n>blockPreferencesAccessLink}" press="onPressPreferencesLink"/>
 					</l:VerticalLayout>
