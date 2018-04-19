@@ -26,37 +26,9 @@ sap.ui.define([
 
 			//set change group for all changes to deferred 
 			this.oODataModel.setDeferredGroups(["Changes"]);
-
-			//get user context	
-			$.ajax({
-
-				//attributes of backend call
-				contentType: "application/json",
-				dataType: "json",
-				processData: false,
-				type: "GET",
-				url: "/node/getUserContext",
-
-				//success handler
-				success: function(oUserContext) {
-
-					//keep track of user context for use in application
-					this.getOwnerComponent().oUserContext = oUserContext;
-
-					//compose name of logged on user
-					var sLoggedOnUser = oUserContext.userInfo.givenName + " " + this.getOwnerComponent().oUserContext.userInfo.familyName;
-
-					//notify about need to set store preference where applicable
-					if (this.getUserStoreID() === null) {
-						this.notifyAboutRequiredPreferences("StoreID");
-					}
-
-					//set view model attributes
-					this.oViewModel.setProperty("/loggedOnUser", sLoggedOnUser);
-
-				}.bind(this)
-
-			});
+			
+			//get user context
+			this.getUserContext();
 
 		},
 
@@ -521,36 +493,40 @@ sap.ui.define([
 			oAlertModel.updateBindings(true);
 
 		},
+		
+		//get user context
+		getUserContext: function() {
 
-		//get user's store ID 
-		getUserStoreID: function() {
+			//get user context	
+			$.ajax({
 
-			//get reference to user context	
-			var oUserContext = this.getOwnerComponent().oUserContext;
+				//attributes of backend call
+				contentType: "application/json",
+				dataType: "json",
+				processData: false,
+				type: "GET",
+				url: "/node/getUserContext",
 
-			//no store ID in user authorization
-			if (!oUserContext.roleAttributes.StoreID || oUserContext.roleAttributes.StoreID.length === 0) {
-				this.notifyAboutMissingAuthorization("StoreID");
-				return;
-			}
+				//success handler
+				success: function(oUserContext) {
 
-			//get store preference as the one that the user is authorized for
-			if (oUserContext.roleAttributes.StoreID.length === 1) {
-				return oUserContext.roleAttributes.StoreID[0];
-			}
+					//keep track of user context for use in application
+					this.getOwnerComponent().oUserContext = oUserContext;
 
-			//user is authorized for more than one store: get store user application parameter
-			var aPreferredStoreID = oUserContext.userParameters.filter(function(oUserParameter) {
-				return oUserParameter.parameterID === "StoreID";
+					//compose name of logged on user
+					var sLoggedOnUser = oUserContext.userInfo.givenName + " " + this.getOwnerComponent().oUserContext.userInfo.familyName;
+
+					//notify about need to set store preference where applicable
+					if (this.getUserStoreID() === null) {
+						this.notifyAboutRequiredPreferences("StoreID");
+					}
+
+					//set view model attributes
+					this.oViewModel.setProperty("/loggedOnUser", sLoggedOnUser);
+
+				}.bind(this)
+
 			});
-
-			//return store that has previously been set as preferred
-			if (aPreferredStoreID.length > 0) {
-				return aPreferredStoreID[0];
-			}
-			
-			//no preferred store can be identified
-			return null;
 
 		}
 

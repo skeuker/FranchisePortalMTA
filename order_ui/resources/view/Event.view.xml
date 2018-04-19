@@ -4,7 +4,7 @@
 	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" useIconTabBar="true" showTitleInHeaderContent="false"
 		selectedSection="sectionEventProducts">
 		<headerTitle>
-			<ObjectPageHeader objectImageURI="/images/pnplogo.png" objectTitle="{FranchisePortal>eventText}" objectImageShape="Square">
+			<ObjectPageHeader objectImageURI="/images/pnplogo_colour.png" objectImageDensityAware="true" objectTitle="{FranchisePortal>eventText}" objectImageShape="Square">
 				<actions>
 					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
 					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>

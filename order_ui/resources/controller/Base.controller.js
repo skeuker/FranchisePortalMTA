@@ -3199,6 +3199,38 @@ sap.ui.define([
 			//hide message strip
 			this.oMessageStrip.setVisible(false);
 			
+		},
+		
+		//get user's store ID 
+		getUserStoreID: function() {
+
+			//get reference to user context	
+			var oUserContext = this.getOwnerComponent().oUserContext;
+
+			//no store ID in user authorization
+			if (!oUserContext.roleAttributes.StoreID || oUserContext.roleAttributes.StoreID.length === 0) {
+				this.notifyAboutMissingAuthorization("StoreID");
+				return;
+			}
+
+			//get store preference as the one that the user is authorized for
+			if (oUserContext.roleAttributes.StoreID.length === 1) {
+				return oUserContext.roleAttributes.StoreID[0];
+			}
+
+			//user is authorized for more than one store: get store user application parameter
+			var aPreferredStoreID = oUserContext.userParameters.filter(function(oUserParameter) {
+				return oUserParameter.parameterID === "StoreID";
+			});
+
+			//return store that has previously been set as preferred
+			if (aPreferredStoreID.length > 0) {
+				return aPreferredStoreID[0].parameterValue;
+			}
+			
+			//no preferred store can be identified
+			return null;
+
 		}
 
 	});

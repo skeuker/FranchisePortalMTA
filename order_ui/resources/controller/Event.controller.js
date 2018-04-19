@@ -299,6 +299,17 @@ sap.ui.define([
 
 			//local data declaration
 			var iItemID = 0;
+			
+			//verify that user's store ID is defined
+			if(!this.getUserStoreID()){
+
+				//send message to message strip
+				this.sendStripMessage(this.getResourceBundle().getText("messageNoUserStoreID"), sap.ui.core.MessageType.Warning);
+
+				//no further processing
+				return;
+				
+			}
 
 			//get event binding context and path
 			var oEventBindingContext = this.getView().getBindingContext("FranchisePortal");
@@ -327,7 +338,7 @@ sap.ui.define([
 			var sOrderRequestID = this.getUUID();
 			
 			//get store ID for which order is to be placed
-			var sStoreID = this.getOwnerComponent().oUserContext.roleAttributes.StoreID.toString();
+			var sStoreID = this.getUserStoreID();
 
 			//prepare order request header
 			var oOrderRequestHeader = {
