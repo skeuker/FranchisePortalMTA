@@ -72,7 +72,7 @@
 		var sOrderNumber = "4500000123";
 
 		//construct basic authentication header
-		var sCredentials = "c024" + ':' + "Morenic>4";
+		var sCredentials = "user" + ':' + "password";
 		var sb64Credentials = new Buffer(sCredentials).toString('base64');
 		var sAuthenticationToken = "Basic " + sb64Credentials;
 
