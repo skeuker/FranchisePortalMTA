@@ -2,7 +2,6 @@ ID: FranchisePortalMTA
 _schema-version: '2.0'
 version: 0.0.1
 modules:
-  
   - name: db
     type: hdb
     path: db
@@ -30,9 +29,8 @@ modules:
           url: '~{url}'
           forwardAuthToken: true
         group: destinations
-      - name: ui5-lib
-        properties:
-          ui5liburl: '~{url}'
+    build-parameters:
+      builder: grunt
   - name: order_ui
     type: html5
     path: order_ui
@@ -44,9 +42,8 @@ modules:
           url: '~{url}'
           forwardAuthToken: true
         group: destinations
-      - name: ui5-lib
-        properties:
-          ui5liburl: '~{url}'
+    build-parameters:
+      builder: grunt
 resources:
   - name: HANA2-uaa
     type: com.sap.xs.uaa-space
@@ -59,8 +56,3 @@ resources:
     properties:
       hdi-container-name: '${service-name}'
     type: com.sap.xs.hdi-container
-  - name: ui5-lib
-    type: configuration
-    parameters:
-      provider-id: 'com.sap.ui5.dist.sapui5-dist-xsa.XSAC_UI5_FESV3:sapui5_fesv3'
-      version: '>=1.44.8'

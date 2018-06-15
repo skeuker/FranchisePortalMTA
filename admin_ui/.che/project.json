@@ -1,1 +1,16 @@
-{"type":"sap.html5","builders":{"default":"ui5-builder","configs":{}},"runners":{"configs":{}},"attributes":{"mta_module_parent":["/FranchisePortalMTA"],"sap.watt.common.setting":["{\"generation\":[{\"templateId\":\"ui5template.basicSAPUI5ApplicationProjectCommon\",\"templateVersion\":\"1.32.0\",\"dateTimeStamp\":\"Fri, 16 Mar 2018 08:07:58 GMT\"},{\"templateId\":\"hanatemplates.basicSAPUI5ApplicationProject\",\"templateVersion\":\"0.0.0\",\"dateTimeStamp\":\"Fri, 16 Mar 2018 08:08:05 GMT\"}],\"basevalidator\":{\"services\":{\"js\":\"jsValidator\",\"xml\":\"xmlValidator\"}}}"]},"mixinTypes":["mtamodule"]}
+{
+	"type": "com.sap.hcp.html5",
+	"builders": {
+		"default": "grunt-builder-cf",
+		"configs": {}
+	},
+	"runners": {
+		"configs": {}
+	},
+	"attributes": {
+		"sap.watt.common.setting": [
+			"{\"projectType\":[\"sap.watt.uitools.ide.fiori\"],\"generation\":[{\"templateId\":\"ui5template.basicSAPUI5ApplicationProjectCommon\",\"templateVersion\":\"1.32.0\",\"dateTimeStamp\":\"Tue, 12 Jun 2018 10:55:43 GMT\"},{\"templateId\":\"html5moduletemplates.basicSAPUI5ApplicationProjectModule\",\"templateVersion\":\"1.40.12\",\"dateTimeStamp\":\"Tue, 12 Jun 2018 10:55:45 GMT\"}],\"basevalidator\":{\"services\":{\"js\":\"fioriJsValidator\",\"xml\":\"fioriXmlAnalysis\"}},\"codeCheckingTriggers\":{\"notifyBeforePush\":false,\"notifyBeforePushLevel\":\"Error\",\"blockPush\":false,\"blockPushLevel\":\"Error\"}}"
+		]
+	},
+	"mixinTypes": ["mtamodule"]
+}
