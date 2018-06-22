@@ -15,7 +15,7 @@
 		"scope": "$XSAPPNAME.Edit"
 	}, {
 		"source": "^/(.*)",
-		"localDir": "resources",
+		"localDir": "webapp",
 		"replace": {
 			"pathSuffixes": ["index.html"],
 			"vars": ["ui5liburl"]
