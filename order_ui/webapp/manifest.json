@@ -10,7 +10,7 @@
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"sourceTemplate": {
-			"id": "servicecatalog.connectivityComponent",
+			"id": "servicecatalog.connectivityComponentForManifest",
 			"version": "0.0.0"
 		},
 		"dataSources": {
@@ -30,6 +30,14 @@
 				"uri": "annotations/annotation.xml",
 				"settings": {
 					"localUri": "annotations/annotation.xml"
+				}
+			},
+			"default": {
+				"uri": "/here/goes/your/serviceurl/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/default/metadata.xml"
 				}
 			}
 		}
@@ -184,7 +192,7 @@
 			}
 		},
 		"resources": {
-			"css": [ ]
+			"css": []
 		}
 	},
 	"sap.platform.hcp": {

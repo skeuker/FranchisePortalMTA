@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<edmx:Edmx Version="1.0"
+    xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+    <edmx:DataServices m:DataServiceVersion="2.0"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+        <Schema Namespace="default"
+            xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+            xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+            xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="EventsType">
+                <Key>
+                    <PropertyRef Name="eventID"/>
+                </Key>
+                <Property Name="eventID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="eventText" Type="Edm.String" MaxLength="80"/>
+                <Property Name="validityStartDate" Type="Edm.DateTime"/>
+                <Property Name="validitEndDate" Type="Edm.DateTime"/>
+                <Property Name="thumbNailUrl" Type="Edm.String" MaxLength="120"/>
+                <NavigationProperty Name="toProducts" Relationship="default.Event_ProductsType" FromRole="EventsPrincipal" ToRole="EventProductsDependent"/>
+                <NavigationProperty Name="toShoppingCartItems" Relationship="default.Event_ShoppingCartItemsType" FromRole="EventsPrincipal" ToRole="EventShoppingCartItemsDependent"/>
+                <NavigationProperty Name="toOrderRequestHeaders" Relationship="default.Event_OrderRequestHeadersType" FromRole="EventsPrincipal" ToRole="OrderRequestHeadersDependent"/>
+            </EntityType>
+            <EntityType Name="ActiveEventsType">
+                <Key>
+                    <PropertyRef Name="eventID"/>
+                </Key>
+                <Property Name="eventID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="eventText" Type="Edm.String" MaxLength="80"/>
+                <Property Name="thumbNailUrl" Type="Edm.String" MaxLength="120"/>
+            </EntityType>
+            <EntityType Name="EventProductsType">
+                <Key>
+                    <PropertyRef Name="eventID"/>
+                    <PropertyRef Name="productID"/>
+                </Key>
+                <Property Name="eventID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="productID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="productText" Type="Edm.String" MaxLength="40"/>
+                <Property Name="thumbNailUrl" Type="Edm.String" MaxLength="120"/>
+                <Property Name="baseMerchCat" Type="Edm.String" MaxLength="20"/>
+                <Property Name="packSize" Type="Edm.Int32"/>
+                <Property Name="packPrice" Type="Edm.Decimal" Precision="10" Scale="2"/>
+                <Property Name="dealPrice" Type="Edm.Decimal" Precision="10" Scale="2"/>
+                <Property Name="barCode" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="EventShoppingCartItemsType">
+                <Key>
+                    <PropertyRef Name="eventID"/>
+                    <PropertyRef Name="productID"/>
+                </Key>
+                <Property Name="eventID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="productID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="productText" Type="Edm.String" MaxLength="40"/>
+                <Property Name="thumbNailUrl" Type="Edm.String" MaxLength="120"/>
+                <Property Name="baseMerchCat" Type="Edm.String" MaxLength="20"/>
+                <Property Name="packSize" Type="Edm.Int32"/>
+                <Property Name="packPrice" Type="Edm.Decimal" Precision="10" Scale="2"/>
+                <Property Name="dealPrice" Type="Edm.Decimal" Precision="10" Scale="2"/>
+                <Property Name="barCode" Type="Edm.String" MaxLength="20"/>
+                <Property Name="quantity" Type="Edm.Int32"/>
+            </EntityType>
+            <EntityType Name="OrderRequestHeadersType">
+                <Key>
+                    <PropertyRef Name="orderRequestID"/>
+                </Key>
+                <Property Name="orderRequestID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="eventID" Type="Edm.String" MaxLength="32"/>
+                <Property Name="storeID" Type="Edm.String" MaxLength="4"/>
+                <Property Name="externalOrderID" Type="Edm.String" MaxLength="10"/>
+                <Property Name="currencyCode" Type="Edm.String" MaxLength="3"/>
+                <NavigationProperty Name="toItems" Relationship="default.OrderRequestHeaders_OrderRequestItemsType" FromRole="OrderRequestHeadersPrincipal" ToRole="OrderRequestItemsDependent"/>
+            </EntityType>
+            <EntityType Name="OrderRequestItemsType">
+                <Key>
+                    <PropertyRef Name="orderRequestID"/>
+                    <PropertyRef Name="itemID"/>
+                </Key>
+                <Property Name="orderRequestID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="itemID" Type="Edm.Int16" Nullable="false"/>
+                <Property Name="productID" Type="Edm.String" MaxLength="32"/>
+                <Property Name="netPrice" Type="Edm.Decimal" Precision="10" Scale="2"/>
+                <Property Name="quantity" Type="Edm.Int32"/>
+            </EntityType>
+            <EntityType Name="DocumentsType">
+                <Key>
+                    <PropertyRef Name="documentID"/>
+                </Key>
+                <Property Name="documentID" Type="Edm.String" Nullable="false" MaxLength="32"/>
+                <Property Name="documentType" Type="Edm.String" MaxLength="80"/>
+                <Property Name="fileName" Type="Edm.String" MaxLength="100"/>
+                <Property Name="fileType" Type="Edm.String" MaxLength="80"/>
+                <Property Name="mimeType" Type="Edm.String" MaxLength="80"/>
+                <Property Name="documentContent" Type="Edm.String" MaxLength="2147483647"/>
+            </EntityType>
+            <EntityType Name="DocumentTypesType">
+                <Key>
+                    <PropertyRef Name="documentTypeID"/>
+                </Key>
+                <Property Name="documentTypeID" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="documentTypeText" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityType Name="ApplicationParametersType">
+                <Key>
+                    <PropertyRef Name="parameterID"/>
+                </Key>
+                <Property Name="parameterID" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Property Name="parameterText" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityType Name="UserApplicationParametersType">
+                <Key>
+                    <PropertyRef Name="userID"/>
+                    <PropertyRef Name="parameterID"/>
+                </Key>
+                <Property Name="userID" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="parameterID" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Property Name="parameterValue" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <Association Name="Event_ProductsType">
+                <End Type="default.EventsType" Role="EventsPrincipal" Multiplicity="1"/>
+                <End Type="default.EventProductsType" Role="EventProductsDependent" Multiplicity="*"/>
+            </Association>
+            <Association Name="Event_ShoppingCartItemsType">
+                <End Type="default.EventsType" Role="EventsPrincipal" Multiplicity="1"/>
+                <End Type="default.EventShoppingCartItemsType" Role="EventShoppingCartItemsDependent" Multiplicity="*"/>
+            </Association>
+            <Association Name="Event_OrderRequestHeadersType">
+                <End Type="default.EventsType" Role="EventsPrincipal" Multiplicity="1"/>
+                <End Type="default.OrderRequestHeadersType" Role="OrderRequestHeadersDependent" Multiplicity="*"/>
+            </Association>
+            <Association Name="OrderRequestHeaders_OrderRequestItemsType">
+                <End Type="default.OrderRequestHeadersType" Role="OrderRequestHeadersPrincipal" Multiplicity="1"/>
+                <End Type="default.OrderRequestItemsType" Role="OrderRequestItemsDependent" Multiplicity="*"/>
+            </Association>
+            <EntityContainer Name="v2" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="Events" EntityType="default.EventsType"/>
+                <EntitySet Name="ActiveEvents" EntityType="default.ActiveEventsType"/>
+                <EntitySet Name="EventProducts" EntityType="default.EventProductsType"/>
+                <EntitySet Name="EventShoppingCartItems" EntityType="default.EventShoppingCartItemsType"/>
+                <EntitySet Name="OrderRequestHeaders" EntityType="default.OrderRequestHeadersType"/>
+                <EntitySet Name="OrderRequestItems" EntityType="default.OrderRequestItemsType"/>
+                <EntitySet Name="Documents" EntityType="default.DocumentsType"/>
+                <EntitySet Name="DocumentTypes" EntityType="default.DocumentTypesType"/>
+                <EntitySet Name="ApplicationParameters" EntityType="default.ApplicationParametersType"/>
+                <EntitySet Name="UserApplicationParameters" EntityType="default.UserApplicationParametersType"/>
+                <AssociationSet Name="Event_Products" Association="default.Event_ProductsType">
+                    <End Role="EventsPrincipal" EntitySet="Events"/>
+                    <End Role="EventProductsDependent" EntitySet="EventProducts"/>
+                </AssociationSet>
+                <AssociationSet Name="Event_ShoppingCartItems" Association="default.Event_ShoppingCartItemsType">
+                    <End Role="EventsPrincipal" EntitySet="Events"/>
+                    <End Role="EventShoppingCartItemsDependent" EntitySet="EventShoppingCartItems"/>
+                </AssociationSet>
+                <AssociationSet Name="Event_OrderRequestHeaders" Association="default.Event_OrderRequestHeadersType">
+                    <End Role="EventsPrincipal" EntitySet="Events"/>
+                    <End Role="OrderRequestHeadersDependent" EntitySet="OrderRequestHeaders"/>
+                </AssociationSet>
+                <AssociationSet Name="OrderRequestHeaders_OrderRequestItems" Association="default.OrderRequestHeaders_OrderRequestItemsType">
+                    <End Role="OrderRequestHeadersPrincipal" EntitySet="OrderRequestHeaders"/>
+                    <End Role="OrderRequestItemsDependent" EntitySet="OrderRequestItems"/>
+                </AssociationSet>
+            </EntityContainer>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

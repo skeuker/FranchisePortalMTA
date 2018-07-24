@@ -1,6 +1,15 @@
 {
-  "welcomeFile": "/webapp/index.html",
+  "welcomeFile": "index.html",
   "routes": [
+  	{
+      "path": "/node",
+      "target": {
+        "type": "destination",
+        "name": "CFNodeFPOrderBackend",
+        "entryPath": "/"
+      },
+      "description": "Destination to node server"
+    },
     {
       "path": "/resources",
       "target": {
@@ -9,7 +18,15 @@
         "entryPath": "/resources"
       },
       "description": "SAPUI5 Resources"
+    },
+    {
+      "path": "/test-resources",
+      "target": {
+        "type": "service",
+        "name": "sapui5",
+        "entryPath": "/test-resources"
+      },
+      "description": "SAPUI5 Test Resources"
     }
-  ],
-  "sendWelcomeFileRedirect": true
+  ]
 }
